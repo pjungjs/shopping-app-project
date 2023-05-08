@@ -28,13 +28,13 @@ CREATE TABLE customers (
 CREATE TABLE products {
   id SERIAL PRIMARY KEY,
   name VARCHAR(20) NOT NULL,
-  category TEXT,
-  upc CHAR(12),
-  price DECIMAL(10,2) NOT NULL,
-  weightInLb DECIMAL(5,1),
-  quantityInStock INT NOT NULL,
   description VARCHAR(40) NOT NULL,
-  imageURL VARCHAR(120)
+  imageURL VARCHAR(120),
+  price DECIMAL(10,2) NOT NULL,
+  quantityInStock INT NOT NULL,
+  cardID VARCHAR(12)
+  cardRarity VARCHAR(18)
+  productUPC CHAR(12),
 }
 
 -- Create a table for "orders"

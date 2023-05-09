@@ -4,11 +4,13 @@ function Home() {
   return (
     <div>
       <h1>Welcome to the Home page!</h1>
-      <Link to="/products">
-        <button>View all the Products!</button>
-      </Link>
+
+      <h3>Are you:</h3>
       <Link to="/customers">
-        <button>View all the Customers!</button>
+        <button>Customer</button>
+      </Link>
+      <Link to="/">
+        <button>Retailer</button>
       </Link>
     </div>
   )

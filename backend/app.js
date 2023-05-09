@@ -10,8 +10,10 @@ app.use(cors());
 app.use(express.json());
 
 const productController = require("./controllers/productController.js");
+const customerController = require("./controllers/customerController.js");
 
 app.use("/products", productController);
+app.use("/customers", customerController);
 
 // ROUTES
 app.get("/", (req, res) => {

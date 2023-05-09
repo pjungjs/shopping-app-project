@@ -15,9 +15,9 @@ CREATE TABLE customers (
   firstName VARCHAR(80) NOT NULL,
   lastName VARCHAR(80) NOT NULL,
   email VARCHAR(120) NOT NULL,
-  phone VARCHAR(20) NOT NULL,
-  addressStreet VARCHAR(40) NOT NULL,
-  addressStreet2 VARCHAR(40),
+  phone VARCHAR(30) NOT NULL,
+  addressStreet VARCHAR(60) NOT NULL,
+  addressStreet2 VARCHAR(30),
   addressCity VARCHAR(80) NOT NULL,
   addressState VARCHAR(40) NOT NULL,
   addressPostalCode VARCHAR(40) NOT NULL,
@@ -25,23 +25,23 @@ CREATE TABLE customers (
 );
 
 -- Create a table for "products"
-CREATE TABLE products {
+CREATE TABLE products (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(20) NOT NULL,
-  description VARCHAR(40) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  description VARCHAR(120) NOT NULL,
   imageURL VARCHAR(120),
   price DECIMAL(10,2) NOT NULL,
   quantityInStock INT NOT NULL,
-  cardID VARCHAR(12)
-  cardRarity VARCHAR(18)
-  productUPC CHAR(12),
-}
+  cardID VARCHAR(12),
+  cardRarity VARCHAR(18),
+  productUPC CHAR(12)
+);
 
 -- Create a table for "orders"
-CREATE TABLE orders {
+CREATE TABLE orders (
   id SERIAL PRIMARY KEY,
-  productId INTEGER REFERENCES products (id) ON DELETE CASCADE
-  customerId INTEGER REFERENCES customers (id) ON DELETE CASCADE
+  productId INT REFERENCES products (id) ON DELETE CASCADE,
+  customerId INT REFERENCES customers (id) ON DELETE CASCADE,
   productQty INT NOT NULL,
   date DATE NOT NULL
-}
+);

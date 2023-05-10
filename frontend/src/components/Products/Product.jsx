@@ -8,7 +8,7 @@ export default function Product({ product, cart, setCart, loggedInAs }) {
         <div className="Product">
             <h4>{product.name}</h4>
             <h5>{product.description}</h5>
-            <img src={product.image_url} alt={`${product.description}`}></img>
+            <img src={require(`${product.image_url}`)} alt={`${product.description}`}></img>
             <p>${product.price} per</p>
             <p>Quantity in stock:  {product.quantity_in_stock}</p>
             <p>Rarity: {product.card_rarity}</p>

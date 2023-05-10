@@ -38,8 +38,8 @@ function App() {
             <Route path="/customers/:id" element={<CustomerDetails />} />
             <Route path="/customers/:id/edit" element={<EditCustomer />} />
 
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:id" element={<Product cart={cart} setCart={setCart} loggedInAs={loggedInAs} />} />
+            <Route path="/products" element={<Products cart={cart} setCart={setCart} loggedInAs={loggedInAs}/>} />
+            <Route path="/products/:id" element={<Product />} />
             
             <Route path="/retailer/products" element={<RetailerProducts />} />
             <Route path="/retailer/products/new" element={<RetailerNewProduct />} />

@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import OrderAddProduct from "../Orders/OrderAddProduct.jsx";
-const API = process.env.REACT_APP_API_URL;
 
 export default function Product({ product, cart, setCart, loggedInAs }) {
     const { id } = useParams();

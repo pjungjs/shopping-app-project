@@ -23,22 +23,22 @@ const getOneCustomer = async (id) => {
 //create query
 const createCustomer = async (customerToAdd) => {
   const { 
-    firstName,
-    lastName,
+    first_name,
+    last_name,
     email,
     phone,
-    addressStreet,
-    addressStreet2,
-    addressCity,
-    addressState,
-    addressPostalCode,
-    paymentInfo
+    address_street,
+    address_street2,
+    address_city,
+    address_state,
+    address_postal_code,
+    payment_info
   } = customerToAdd;
 
   try {
     const newCustomer = await db.one(
-      "INSERT INTO customers (firstName, lastName, email, phone, addressStreet, addressStreet2, addressCity, addressState, addressPostalCode, paymentInfo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;",
-      [firstName, lastName, email, phone, addressStreet, addressStreet2, addressCity, addressState, addressPostalCode, paymentInfo]
+      "INSERT INTO customers (first_name, last_name, email, phone, address_street, address_street2, address_city, address_state, address_postal_code, payment_info) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *;",
+      [first_name, last_name, email, phone, address_street, address_street2, address_city, address_state, address_postal_code, payment_info]
     );
     return { success: true, payload: newCustomer };
   } catch (error) {
@@ -59,22 +59,22 @@ const deleteCustomer = async (id) => {
 //update query
 const updateCustomer = async (id, customerToUpdate) => {
   const { 
-    firstName,
-    lastName,
+    first_name,
+    last_name,
     email,
     phone,
-    addressStreet,
-    addressStreet2,
-    addressCity,
-    addressState,
-    addressPostalCode,
-    paymentInfo
+    address_street,
+    address_street2,
+    address_city,
+    address_state,
+    address_postal_code,
+    payment_info
   } = customerToUpdate;
 
   try {
     const updatedCustomer = await db.one(
-      "UPDATE customers SET firstName=$1, lastName=$2, email=$3, phone=$4, addressStreet=$5, addressStreet2=$6, addressCity=$7, addressState=$8, addressPostalCode=$9, paymentInfo=$10 WHERE id=$11 RETURNING *;",
-      [firstName, lastName, email, phone, addressStreet, addressStreet2, addressCity, addressState, addressPostalCode, paymentInfo, id]
+      "UPDATE customers SET first_name=$1, last_name=$2, email=$3, phone=$4, address_street=$5, address_street2=$6, address_city=$7, address_state=$8, address_postal_code=$9, payment_info=$10 WHERE id=$11 RETURNING *;",
+      [first_name, last_name, email, phone, address_street, address_street2, address_city, address_state, address_postal_code, payment_info, id]
     );
     return { success: true, payload: updatedCustomer };
   } catch (error) {

@@ -4,9 +4,9 @@ const db = require("../db/dbConfig.js");
 const getAllProducts = async () => {
     try {
         const allProducts = await db.any("SELECT * FROM products");
-        return allProducts;
+        return {success: true, payload: allProducts};
     } catch (error) {
-        return error;
+        return {success: false, payload: error};
     }
 };
 
@@ -14,9 +14,9 @@ const getAllProducts = async () => {
 const getProduct = async (id) => {
     try {
         const oneProduct = await db.one("SELECT * FROM products WHERE id=$1", id);
-        return oneProduct;
+        return {success: true, payload: oneProduct};
     } catch (error) {
-        return error;
+        return {success: false, payload: error};
     }
 };
 
@@ -24,12 +24,12 @@ const getProduct = async (id) => {
 const createProduct = async (product) => {
     try {
         const newProduct = await db.one(
-            "INSERT INTO products (name, description, imageURL, price, quantityInStock, cardID, cardRarity, productUPC) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
-            [product.name, product.description, product.imageURL, product.price, product.quantityInStock, product.cardID, product.cardRarity, product.productUPC]
+            "INSERT INTO products (name, description, image_url, price, quantity_in_stock, card_id, card_rarity, product_upc) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+            [product.name, product.description, product.image_url, product.price, product.quantity_in_stock, product.card_id, product.card_rarity, product.product_upc]
         );
-        return newProduct;
+        return {success: true, payload: newProduct};
     } catch (error) {
-        return error;
+        return {success: false, payload: error};
     }
 };
 
@@ -40,9 +40,9 @@ const deleteProduct= async (id) => {
             "DELETE FROM products WHERE id = $1 RETURNING *",
             id
         );
-        return deletedProduct;
+        return {success: true, payload: deletedProduct};
     } catch (error) {
-        return error;
+        return {success: false, payload: error};
     }
 };
 
@@ -50,12 +50,12 @@ const deleteProduct= async (id) => {
 const updateProduct = async (id, product) => {
     try {
         const updatedProduct = await db.one(
-            "UPDATE products SET name=$1, description=$2, imageURL=$3, price=$4, quantityInStock=$5, cardID=$6, cardRarity=$7, productUPC=$8 WHERE id=$9 RETURNING *",
-            [product.name, product.description, product.imageURL, product.price, product.quantityInStock, product.cardID, product.cardRarity, product.productUPC, id]
+            "UPDATE products SET name=$1, description=$2, image_url=$3, price=$4, quantity_in_stock=$5, card_id=$6, card_rarity=$7, product_upc=$8 WHERE id=$9 RETURNING *",
+            [product.name, product.description, product.image_url, product.price, product.quantity_in_stock, product.card_id, product.card_rarity, product.product_upc, id]
         );
-        return updatedProduct;
+        return {success: true, payload: updatedProduct};
     } catch (error) {
-        return error;
+        return {success: true, payload: error};
     }
 };
 

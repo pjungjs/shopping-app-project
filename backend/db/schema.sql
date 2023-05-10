@@ -12,16 +12,16 @@ CREATE DATABASE shopcart_dev;
 -- Create a table for "customers"
 CREATE TABLE customers (
   id SERIAL PRIMARY KEY,
-  firstName VARCHAR(80) NOT NULL,
-  lastName VARCHAR(80) NOT NULL,
+  first_name VARCHAR(80) NOT NULL,
+  last_name VARCHAR(80) NOT NULL,
   email VARCHAR(120) NOT NULL,
   phone VARCHAR(30) NOT NULL,
-  addressStreet VARCHAR(60) NOT NULL,
-  addressStreet2 VARCHAR(30),
-  addressCity VARCHAR(80) NOT NULL,
-  addressState VARCHAR(40) NOT NULL,
-  addressPostalCode VARCHAR(40) NOT NULL,
-  paymentInfo TEXT NOT NULL
+  address_street VARCHAR(60) NOT NULL,
+  address_street2 VARCHAR(30),
+  address_city VARCHAR(80) NOT NULL,
+  address_state VARCHAR(40) NOT NULL,
+  address_postal_code VARCHAR(40) NOT NULL,
+  payment_info TEXT NOT NULL
 );
 
 -- Create a table for "products"
@@ -29,19 +29,19 @@ CREATE TABLE products (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   description VARCHAR(120) NOT NULL,
-  imageURL VARCHAR(120),
+  image_url VARCHAR(120),
   price DECIMAL(10,2) NOT NULL,
-  quantityInStock INT NOT NULL,
-  cardID VARCHAR(12),
-  cardRarity VARCHAR(18),
-  productUPC CHAR(12)
+  quantity_in_stock INT NOT NULL,
+  card_id VARCHAR(12),
+  card_rarity VARCHAR(18),
+  product_upc CHAR(12)
 );
 
 -- Create a table for "orders"
 CREATE TABLE orders (
   id SERIAL PRIMARY KEY,
-  productId INT REFERENCES products (id) ON DELETE CASCADE,
-  customerId INT REFERENCES customers (id) ON DELETE CASCADE,
-  productQty INT NOT NULL,
+  product_id INT REFERENCES products (id) ON DELETE CASCADE,
+  customer_id INT REFERENCES customers (id) ON DELETE CASCADE,
+  product_qty INT NOT NULL,
   date DATE NOT NULL
 );

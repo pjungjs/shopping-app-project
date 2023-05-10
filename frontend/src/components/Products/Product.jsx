@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-export default function Product() {
+export default function Product({cart, setCart, logInCustomer}) {
     const {product, setProduct} = useState({});
     const { id } = useParams();
 
@@ -27,7 +27,11 @@ export default function Product() {
             <p>Rarity: {product.cardRarity}</p>
             <p>Card ID:  {product.cardID}</p>
             <p>UPC:  {product.productUPC}</p>
-            <OrderAddProduct productInStock={product.quantityInStock}/>
+            <OrderAddProduct 
+            productInStock={product.quantityInStock} 
+            cart={cart} 
+            setCart={setCart} 
+            logInCustomer={logInCustomer}/>
         </div>
     )
 }

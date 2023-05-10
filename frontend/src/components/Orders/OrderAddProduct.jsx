@@ -10,15 +10,10 @@ Check dependencies.
   date DATE NOT NULL
 */
 
-import axios from "axios";
-import { useState, useEffect } from "react";
-import { useNavigate, useParams} from "react-router-dom";
-const API = process.env.REACT_APP_API_URL;
+import { useNavigate } from "react-router-dom";
 
-export default function OrderAddProduct({customerId ="", cartContents=[]}) {
+export default function OrderAddProduct({productInStock, cart, setCart, logInCustomer}) {
   let navigate = useNavigate();
-  //Accesses from /products/:id
-  const { id } = useParams();
 
   const [order, setOrder] = useState({
     productId: "",
@@ -28,6 +23,9 @@ export default function OrderAddProduct({customerId ="", cartContents=[]}) {
   });
 
   const addOrder = (qty) => {
+    if (qty > productInStock) {
+
+    }
     axios.get(`${API}/products/${id}`)
     .then((response) => {
       console.log(response.data.quantityinstock)
@@ -54,7 +52,7 @@ export default function OrderAddProduct({customerId ="", cartContents=[]}) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    addOrder(order);
+    addOrder(event.target.quantity);
   };
 
   return (

@@ -3,14 +3,14 @@
 \c shopcart_dev;
 
 INSERT INTO customers
-(firstName, lastName, email, phone, addressStreet, addressStreet2, addressCity, addressState, addressPostalCode, paymentInfo)
+(first_name, last_name, email, phone, address_street, address_street2, address_city, address_state, address_postal_code, payment_info)
 VALUES
 ('John', 'Smith', 'john@example.com', '(212) 555-1234', '123 Main St', 'Apt 1', 'Anytown', 'CA', '12345', 'Visa ending in 1234'),
 ('Jane', 'Doe', 'jane@example.com', '(718) 555-5678', '456 Oak Ave', NULL, 'Another City', 'NY', '67890', 'Mastercard ending in 5678'),
 ('Bob', 'Johnson', 'bob@example.com', '(347) 555-9012', '789 Elm St', 'Suite 3', 'Someplace', 'TX', '23456', 'American Express ending in 9012');
 
 INSERT INTO products 
-(name, description, imageURL, price, quantityInStock, cardID, cardRarity, productUPC)
+(name, description, image_url, price, quantity_in_stock, card_id, card_rarity, product_upc)
 VALUES
 ('Roronoa Zoro', 'Supernovas/Straw Hat Crew', 'placeholder112/OP01-001.jpg', 7.95, 60, 'OP01-001', 'Leader', 'none'),
 ('Trafalgar Law', 'Supernovas/Heart Pirates', 'placeholder112/OP01-002.jpg', 3.95, 27, 'OP01-002', 'Leader', 'none'),
@@ -64,7 +64,7 @@ VALUES
 ('Penguin', 'Heart Pirates', 'placeholder112/OP01-050.jpg', 8.98, 94, 'OP01-050', 'Common', 'none');
 
 INSERT INTO orders
-(productId, customerId, productQty, date)
+(product_id, customer_id, product_qty, date)
 VALUES
 (1, 1, 5, '2023-05-08'),
 (2, 1, 3, '2023-05-08'),

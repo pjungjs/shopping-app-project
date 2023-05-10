@@ -6,7 +6,7 @@ export default function OrderAddProduct({productInStock, cart, setCart, loggedIn
   const cartString=`cart${productID}`;
 
   const [order, setOrder] = useState({
-    cartString: "",
+    [cartString]: "",
     productQty: "",
   });
 
@@ -21,7 +21,7 @@ export default function OrderAddProduct({productInStock, cart, setCart, loggedIn
 
   const handleTextChange = (event) => {
     const tempCartString = `cart${event.target.id}`
-    setOrder({ ...order, tempCartString: event.target.value });
+    setOrder({ ...order, [tempCartString]: event.target.value });
   };
 
   const handleSubmit = (event) => {

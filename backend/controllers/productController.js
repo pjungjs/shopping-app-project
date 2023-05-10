@@ -1,5 +1,5 @@
 const express = require("express");
-const products = express.Router({mergeParams: true });
+const products = express.Router({ mergeParams: true });
 const {
   getAllProducts,
   getProduct,
@@ -10,11 +10,11 @@ const {
 
 // INDEX SHOW ALL
 products.get("/", async (req, res) => {
-  try {
-    const allProducts = await getAllProducts();
-    res.json(allProducts);
-  } catch (err) {
-    res.json(err);
+  const allProducts = await getAllProducts();
+  if (allProducts.success) {
+    res.status(200).json(allProducts.payload);
+  } else {
+    res.status(400).json({error: `Error: ${allProducts.payload}`})
   }
 });
 
@@ -22,20 +22,20 @@ products.get("/", async (req, res) => {
 products.get("/:id", async (req, res) => {
   const { id } = req.params;
   const product = await getProduct(id);
-  if (product) {
-    res.json(product);
+  if (product.success) {
+    res.status(200).json(product.payload);
   } else {
-    res.status(404).json({ error: "not found" });
+    res.status(404).json({ error: `Error: ${product.payload}` });
   }
 });
 
 // CREATE
 products.post("/", async (req, res) => {
-  try {
-    const product = await createProduct(req.body);
-    res.json(product);
-  } catch (error) {
-    res.status(400).json({ error: error });
+  const product = await createProduct(req.body);
+  if (product.success) {
+    res.status(200).json(product.payload);
+  } else {
+    res.status(400).json({error: `Error: ${product.payload}`})
   }
 });
 
@@ -43,18 +43,22 @@ products.post("/", async (req, res) => {
 products.delete("/:id", async (req, res) => {
   const { id } = req.params;
   const deletedProduct = await deleteProduct(id);
-  if (deletedProduct.id) {
-    res.status(200).json(deletedProduct);
+  if (deletedProduct.success) {
+    res.status(200).json(deletedProduct.payload);
   } else {
-    res.status(404).json("Product not found");
+    res.status(400).json({error: `Error: ${deletedProduct.payload}`});
   }
 });
 
 // UPDATE
-products.put("/:id",async (req, res) => {
+products.put("/:id", async (req, res) => {
   const { id } = req.params;
   const updatedProduct = await updateProduct(id, req.body);
-  res.status(200).json(updatedProduct);
-});
+  if (updatedProduct.success) {
+    res.status(200).json(updatedProduct.payload);
+  } else {
+    res.status(400).json({error: `Error: ${updatedProduct.payload}`})
+  }
+}); 
 
 module.exports = products;

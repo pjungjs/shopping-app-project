@@ -1,18 +1,6 @@
-/*
-Check dependencies.
-*/
+import { Link } from "react-router-dom";
 
-/*orders 
-  id SERIAL PRIMARY KEY,
-  productId INTEGER REFERENCES products (id) ON DELETE CASCADE
-  customerId INTEGER REFERENCES customers (id) ON DELETE CASCADE
-  productQty INT NOT NULL,
-  date DATE NOT NULL
-*/
-
-import { useNavigate } from "react-router-dom";
-
-export default function OrderAddProduct({productInStock, cart, setCart, logInCustomer}) {
+export default function OrderAddProduct({productInStock, cart, setCart, logInCustomer, productID=0}) {
   let navigate = useNavigate();
 
   const [order, setOrder] = useState({
@@ -22,28 +10,12 @@ export default function OrderAddProduct({productInStock, cart, setCart, logInCus
     date: ""
   });
 
-  const addOrder = (qty) => {
+  const addLineItemToCart = (qty) => {
     if (qty > productInStock) {
+      setCart([...cart, {[`cart${id}`]: qty}]);
+    } else {
 
     }
-    axios.get(`${API}/products/${id}`)
-    .then((response) => {
-      console.log(response.data.quantityinstock)
-      if (response.data.quantityinstock);
-    })
-    // //setOrder order.productId, order.customerId, order.date
-    // //axios attempt to subtract amount from products quantity
-
-    // axios
-
-    //   .post(`${API}/orders`, newOrder)
-    //   .then(
-    //     () => {
-    //       navigate(`/orders`);
-    //     },
-    //     (error) => console.error(error)
-    //   )
-    //   .catch((c) => console.warn("catch", c));
   };
 
   const handleTextChange = (event) => {
@@ -52,7 +24,7 @@ export default function OrderAddProduct({productInStock, cart, setCart, logInCus
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    addOrder(event.target.quantity);
+    addLineItemToCart(event.target.quantity);
   };
 
   return (
@@ -64,11 +36,16 @@ export default function OrderAddProduct({productInStock, cart, setCart, logInCus
           value={order.productQty}
           type="number"
           onChange={handleTextChange}
-          placeholder="0"
+          placeholder={productID}
         />
         <br />
         <input type="submit" />
       </form>
+      <div>
+        <Link to={`/products`}>
+          <button>Return to Products</button>
+        </Link>
+      </div>
     </div>
   );
 }

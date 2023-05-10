@@ -59,6 +59,6 @@ products.put("/:id", async (req, res) => {
   } else {
     res.status(400).json({error: `Error: ${updatedProduct.payload}`})
   }
-});
+}); 
 
 module.exports = products;

@@ -1,23 +1,9 @@
-import axios from 'axios';
-import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import OrderAddProduct from "../Orders/OrderAddProduct.jsx";
 const API = process.env.REACT_APP_API_URL;
 
-export default function Product({ cart, setCart, loggedInAs }) {
-    const [product, setProduct] = useState({});
+export default function Product({ product, cart, setCart, loggedInAs }) {
     const { id } = useParams();
-
-    useEffect(() => {
-        axios.get(`${API}/products/${id}`)
-            .then((response) => {
-                console.log(response.data);
-                setProduct(response.data);
-            }).catch((e) => {
-                console.warn("catch", e);
-            })
-            //Note:  "API" used as dependency in class.  Removing per Lint error.
-    }, [id]);
 
     return (
         <div className="Product">

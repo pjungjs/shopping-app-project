@@ -59,4 +59,4 @@ const updateOrder = async (id, order) => {
     }
 };
 
-module.exports = { getAllOrders, createOrder, getOrder, deleteOrder, updateOrder };
+module.exports = { getAllOrders, getOrder, createOrder, deleteOrder, updateOrder };

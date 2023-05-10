@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function OrderAddProduct({productInStock, cart, setCart, logInCustomer, productID=0}) {
-  let navigate = useNavigate();
+export default function OrderAddProduct({productInStock, cart, setCart, loggedInAs, productID=0}) {
 
   const [order, setOrder] = useState({
     productId: "",

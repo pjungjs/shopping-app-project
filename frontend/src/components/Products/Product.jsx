@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import OrderAddProduct from "../Orders/OrderAddProduct.jsx";
+import OrderAddProduct from "";
 const API = process.env.REACT_APP_API_URL;
 
 export default function Product({ cart, setCart, loggedInAs }) {
@@ -34,7 +34,7 @@ export default function Product({ cart, setCart, loggedInAs }) {
                 productInStock={product.quantity_in_stock}
                 cart={cart}
                 setCart={setCart}
-                logInCustomer={logInCustomer} 
+                loggedInAs={loggedInAs} 
                 />
         </div>
     )

@@ -12,10 +12,16 @@ import CustomerDetails from "./components/Customers/CustomerDetails.jsx";
 import EditCustomer from "./components/Customers/EditCustomer.jsx";
 
 import Products from "./components/Products/Products.jsx";
+import Product from "./components/Products/Product.jsx";
+
+import RetailerProducts from "./components/Retailers/RetailerProducts.jsx";
+import RetailerNewProduct from "./components/Retailers/RetailerNewProduct.jsx";
+import RetailerEditProduct from "./components/Retailers/RetailerEditProduct.jsx";
 
 
 function App() {
   const [loggedInAs, setLoggedInAs] = useState("");
+  const [cart, setCart] = useState({});
 
   return (
     <div className="App">
@@ -31,8 +37,13 @@ function App() {
             <Route path="/customers/new" element={<NewCustomer />} />
             <Route path="/customers/:id" element={<CustomerDetails />} />
             <Route path="/customers/:id/edit" element={<EditCustomer />} />
-                        
+
             <Route path="/products" element={<Products />} />
+            <Route path="/products/:id" element={<Product cart={cart} setCart={setCart} loggedInAs={loggedInAs} />} />
+            
+            <Route path="/retailer/products" element={<RetailerProducts />} />
+            <Route path="/retailer/products/new" element={<RetailerNewProduct />} />
+            <Route path="/retailer/product/:id/edit" element={<RetailerEditProduct />} />
 
             <Route path="/*" element={<Error />} />
           </Routes>

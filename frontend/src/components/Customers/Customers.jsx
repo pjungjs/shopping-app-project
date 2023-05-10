@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Customer from "./Customer.jsx";
 const API = process.env.REACT_APP_API_URL;
 
-function Customers({ setLogInCustomer }) {
+function Customers({ setLoggedInAs }) {
   const [allCustomers, setAllCustomers] = useState([]);
 
   useEffect(() => {
@@ -12,10 +12,10 @@ function Customers({ setLogInCustomer }) {
       await axios
         .get(`${API}/customers`)
         .then((response) => setAllCustomers(response.data))
-        .catch((error) => console.error("Error: GET all", error))
-    }
+        .catch((error) => console.error("Error: GET all", error));
+    };
     getAllCustomers();
-  }, [])
+  }, []);
 
   return (
     <div>
@@ -24,7 +24,7 @@ function Customers({ setLogInCustomer }) {
       <ul>Login As:
         {
           allCustomers.map((customer) => {
-            return <Customer key={customer.id} customer={customer} setLogInCustomer={setLogInCustomer} />
+            return <Customer key={customer.id} customer={customer} setLoggedInAs={setLoggedInAs} />
           })
         }
         <li>

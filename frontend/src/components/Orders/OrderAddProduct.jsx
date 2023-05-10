@@ -1,39 +1,30 @@
 import { Link } from "react-router-dom";
 
-export default function OrderAddProduct({productInStock, cart, setCart, logInCustomer, productID=0}) {
-  let navigate = useNavigate();
+export default function OrderAddProduct({productInStock, cart, setCart, loggedInAs, productID=0}) {
+  console.log("OAP");
 
-  const [order, setOrder] = useState({
-    productId: "",
-    customerId: "",
-    productQty: "",
-    date: ""
-  });
-
-  const addLineItemToCart = (qty) => {
-    if (qty > productInStock) {
-      setCart([...cart, {[`cart${id}`]: qty}]);
-    } else {
-
-    }
-  };
 
   const handleTextChange = (event) => {
-    setOrder({ ...order, [event.target.id]: event.target.value });
+    // setCart({ ...cart, [`cart${event.target.id}`]: event.target.value });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    addLineItemToCart(event.target.quantity);
+    // if (event.target.quantity > productInStock) {
+    //   setCart({...cart, [`cart${productID}`]: event.target.quantity});
+    // } else {
+    //   event.target.quantity = productInStock;
+    //   alert (`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
+    // }
   };
 
   return (
     <div className="New">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={() => handleSubmit}>
         <label htmlFor="quantity">Quantity:</label>
         <input
           id="quantity"
-          value={order.productQty}
+          value=""
           type="number"
           onChange={handleTextChange}
           placeholder={productID}

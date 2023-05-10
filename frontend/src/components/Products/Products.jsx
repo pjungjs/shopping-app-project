@@ -20,6 +20,7 @@ function Products({ cart, setCart, loggedInAs}) {
       {products.map((product) => {
         return (
           <Product 
+          key = {product.id}
           product={product}
           cart={cart}
           setCart={setCart}

@@ -1,28 +1,26 @@
 import { Link } from "react-router-dom";
 
 export default function OrderAddProduct({productInStock, cart, setCart, loggedInAs, productID=0}) {
+  console.log("OAP");
 
-  const addLineItemToCart = (event) => {
-    if (event.target.quantity > productInStock) {
-      setCart({...cart, [`cart${productID}`]: event.target.quantity});
-    } else {
-      event.target.quantity = productInStock;
-      alert (`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
-    }
-  };
 
   const handleTextChange = (event) => {
-    setCart({ ...cart, [`cart${event.target.id}`]: event.target.value });
+    // setCart({ ...cart, [`cart${event.target.id}`]: event.target.value });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    addLineItemToCart(event);
+    // if (event.target.quantity > productInStock) {
+    //   setCart({...cart, [`cart${productID}`]: event.target.quantity});
+    // } else {
+    //   event.target.quantity = productInStock;
+    //   alert (`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
+    // }
   };
 
   return (
     <div className="New">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={() => handleSubmit}>
         <label htmlFor="quantity">Quantity:</label>
         <input
           id="quantity"

@@ -3,7 +3,7 @@ import OrderAddProduct from "../Orders/OrderAddProduct.jsx";
 
 export default function Product({ product, cart, setCart, loggedInAs }) {
     const { id } = useParams();
-
+    console.log("product");
     return (
         <div className="Product">
             <h4>{product.name}</h4>

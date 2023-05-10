@@ -15,19 +15,19 @@ import Products from "./components/Products/Products.jsx";
 
 
 function App() {
-  const [logInCustomer, setLogInCustomer] = useState("");
+  const [loggedInAs, setLoggedInAs] = useState("");
 
   return (
     <div className="App">
       <Router>
         <header>
-          <NavBar logInCustomer={logInCustomer} />
+          <NavBar loggedInAs={loggedInAs} />
         </header>
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
 
-            <Route path="/customers" element={<Customers setLogInCustomer={setLogInCustomer} />} />
+            <Route path="/customers" element={<Customers setLoggedInAs={setLoggedInAs} />} />
             <Route path="/customers/new" element={<NewCustomer />} />
             <Route path="/customers/:id" element={<CustomerDetails />} />
             <Route path="/customers/:id/edit" element={<EditCustomer />} />

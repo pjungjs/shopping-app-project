@@ -1,17 +1,17 @@
 import { useNavigate } from "react-router-dom";
 
-function Customer({ customer, setLogInCustomer }) {
+function Customer({ customer, setLoggedInAs }) {
   const navigate = useNavigate();
 
   function handleOnClick() {
-    setLogInCustomer(customer.firstname);
+    setLoggedInAs(customer);
     navigate("/products");
   }
 
   return (
     <>
       <li>
-        <button onClick={() => handleOnClick()}>{customer.firstname}</button>
+        <button onClick={() => handleOnClick()}>{customer.first_name}</button>
       </li>
     </>
   )

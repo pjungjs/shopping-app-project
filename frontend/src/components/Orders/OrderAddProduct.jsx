@@ -1,29 +1,32 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function OrderAddProduct({productInStock, cart, setCart, loggedInAs, productID=0}) {
 
+  const cartString=`cart${productID}`;
+
   const [order, setOrder] = useState({
-    productId: "",
-    customerId: "",
+    cartString: "",
     productQty: "",
-    date: ""
   });
 
-  const addLineItemToCart = (qty) => {
-    if (qty > productInStock) {
-      setCart([...cart, {[`cart${id}`]: qty}]);
+  const addLineItemToCart = (event) => {
+    if (event.target.quantity > productInStock) {
+      setCart([...cart, {cartString: event.target.quantity}]);
     } else {
-
+      event.target.quantity = productInStock;
+      alert (`Sorry, only ${productInStock} of ${event.target.quantity} were in stock.  Your order has been updated to the maximum available quantity.`)
     }
   };
 
   const handleTextChange = (event) => {
-    setOrder({ ...order, [event.target.id]: event.target.value });
+    const tempCartString = `cart${event.target.id}`
+    setOrder({ ...order, tempCartString: event.target.value });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    addLineItemToCart(event.target.quantity);
+    addLineItemToCart(event);
   };
 
   return (

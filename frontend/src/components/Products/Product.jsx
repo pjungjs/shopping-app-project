@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import OrderAddProduct from "../Orders/OrderAddProduct.jsx";
 const API = process.env.REACT_APP_API_URL;
 
-export default function Product({ cart, setCart, logInCustomer }) {
+export default function Product({ cart, setCart, loggedInAs }) {
     const [product, setProduct] = useState({});
     const { id } = useParams();
 

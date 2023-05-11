@@ -4,15 +4,13 @@ import { useNavigate } from "react-router-dom";
 const API = process.env.REACT_APP_API_URL;
 
 export default function CustomerCart({ loggedInAs, setCart, customerCart = {} }) {
-  console.log("CCartKeys", Object.keys(customerCart))
-  console.log("CCart", customerCart);
-  console.log("truthy?", !!(Object.keys(customerCart).length === 0))
 
   const [editProduct, setEditProduct] = useState([]);
+  const [lineOrder, setLineOrder] = useState({});
 
-  useEffect (() => {
+  useEffect(() => {
 
-  },[])
+  }, [])
   // const [editOrder, setEditOrder] = useState([]);
   const navigate = useNavigate();
 
@@ -29,17 +27,23 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
       return (
         <div>
           {Object.keys(customerCart).map((lineItemOnOrder) => {
+            // axios.get(`${API}/products/${lineItemOnOrder.split("product")}`)
+            //   .then((response) => {
+            //     console.log(response.data);
+            //     setLineOrder(response.data);
+            //   }).catch((e) => {
+            //     console.warn("catch", e);
+            //   })
+
             return (
               <div key={lineItemOnOrder}>
                 <span> Item ID: {lineItemOnOrder.split("product")}</span>
-                {gimmeSpace(5)}
+                {gimmeSpace(20)}
                 <span>Qty Ordered: {customerCart[lineItemOnOrder]}</span>
- 
               </div>
             )
           })
           }
-
         </div>
       )
     }

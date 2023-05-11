@@ -18,8 +18,12 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
   const [formQty, setFormQty] = useState(0);
 
   useEffect(() => {
-    console.log("formQty", formQty);
+    //console.log("formQty", formQty);
   },[formQty])
+
+  useEffect(() => {
+    console.log("OAPcart", cart);
+  },[cart])
 
   const handleTextChange = (event) => {
     const htcValue=event.target.value;
@@ -42,7 +46,7 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
 
   return (
     <div className="New">
-      <form onSubmit={() => handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="quantity">Quantity:</label>
         <input
           id="quantity"

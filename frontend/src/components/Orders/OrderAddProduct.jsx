@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import { Link } from "react-router-dom";
 
 export default function OrderAddProduct({ productInStock, cart, setCart, loggedInAs, productID }) {
@@ -17,8 +17,13 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
   */
   const [formQty, setFormQty] = useState(0);
 
+  useEffect(() => {
+    console.log("formQty", formQty);
+  },[formQty])
+
   const handleTextChange = (event) => {
-    setFormQty(Number(event.target.value));
+    const htcValue=event.target.value;
+    setFormQty((htcValue !== "") ? Number(htcValue) : 0);
   };
 
   const handleSubmit = (event) => {
@@ -41,10 +46,10 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
         <label htmlFor="quantity">Quantity:</label>
         <input
           id="quantity"
-          value={formQty}
+          value={formQty === 0 ? "" : formQty}
           type="number"
           onChange={handleTextChange}
-          placeholder={productID}
+          placeholder="0"
         />
         <br />
         <input type="submit" />

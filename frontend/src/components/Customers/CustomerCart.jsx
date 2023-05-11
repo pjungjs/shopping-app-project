@@ -6,14 +6,14 @@ const API = process.env.REACT_APP_API_URL;
 export default function CustomerCart({ loggedInAs, setCart, customerCart = {} }) {
   console.log("CCartKeys", Object.keys(customerCart))
   console.log("CCart", customerCart); 
-  console.log("truthy?", !!(Object.keys(customerCart) === 0))
+  console.log("truthy?", !!(Object.keys(customerCart).length === 0))
 
   const [editProduct, setEditProduct] = useState([]);
   // const [editOrder, setEditOrder] = useState([]);
   const navigate = useNavigate();
 
   const listCartItems = () => {
-    if ((Object.keys(customerCart) === 0)) {
+    if (Object.keys(customerCart).length === 0) {
       return `No items in cart`
     } else {
       return ("it's a secret")

@@ -1,28 +1,53 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 const API = process.env.REACT_APP_API_URL;
 
 export default function CustomerCart({ loggedInAs, setCart, customerCart = {} }) {
   console.log("CCartKeys", Object.keys(customerCart))
-  console.log("CCart", customerCart); 
+  console.log("CCart", customerCart);
   console.log("truthy?", !!(Object.keys(customerCart).length === 0))
 
   const [editProduct, setEditProduct] = useState([]);
+
+  useEffect (() => {
+
+  },[])
   // const [editOrder, setEditOrder] = useState([]);
   const navigate = useNavigate();
 
+  const gimmeSpace = (spaces) => {
+    return "\u00A0".repeat(spaces)
+  }
+
   const listCartItems = () => {
     if (Object.keys(customerCart).length === 0) {
-      return `No items in cart`
+      return (
+        <div>No items in cart</div>
+      )
     } else {
-      return ("it's a secret")
+      return (
+        <div>
+          {Object.keys(customerCart).map((lineItemOnOrder) => {
+            return (
+              <div key={lineItemOnOrder}>
+                <span> Item ID: {lineItemOnOrder.split("product")}</span>
+                {gimmeSpace(5)}
+                <span>Qty Ordered: {customerCart[lineItemOnOrder]}</span>
+ 
+              </div>
+            )
+          })
+          }
+
+        </div>
+      )
     }
   }
   return (
     <div>
       <h1>
-      {loggedInAs.first_name}'s cart
+        {loggedInAs.first_name}'s cart
       </h1>
       {listCartItems()}
     </div>

@@ -1,12 +1,10 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 const API = process.env.REACT_APP_API_URL;
 
 function CustomerHistory({ loggedInAs }) {
   const [customerHistory, setCustomerHistory] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function getById() {
@@ -29,16 +27,15 @@ function CustomerHistory({ loggedInAs }) {
   }, [customerHistory]);
 
   function showHistory(history, boughtProduct) {
-    const { product_id, product_qty, date } = history;
-    // let { name, image_url, price, card_id, quantity_in_stock } = boughtProduct;
     const imagePath = boughtProduct.image_url.slice(2);
+    const cardTotalPrice = (history.product_qty * boughtProduct.price).toFixed(2);
 
     return (
       <>
         <img src={require(`../Products/${imagePath}`)} alt="card image" style={{"width": "100px"}}/>
-        <p>{date}</p>
+        <p>{history.date}</p>
         <p>{boughtProduct.name}</p>
-        <p>{product_qty} * ${boughtProduct.price} = ${(product_qty*boughtProduct.price).toFixed(2)}</p>
+        <p>{history.product_qty} * ${boughtProduct.price} = ${cardTotalPrice}</p>
       </>
     )
   }

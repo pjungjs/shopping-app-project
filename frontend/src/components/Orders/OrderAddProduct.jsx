@@ -40,7 +40,7 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
       console.log("OAPCart orderqty <= instock", cart)
     } else {
       setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(productInStock) } });
-      event.target.quantity = productInStock;
+      setFormQty(productInStock);
       alert(`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
       console.log("OAPCart orderqty > instock", cart)
     }

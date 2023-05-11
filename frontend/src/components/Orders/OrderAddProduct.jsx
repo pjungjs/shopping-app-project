@@ -17,16 +17,18 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
   */
   const [formQty, setFormQty] = useState(0);
 
+  //useEffect code for testing.  Do not remove.
   useEffect(() => {
     //console.log("formQty", formQty);
-  },[formQty])
+  }, [formQty])
 
+  //useEffect code for testing.  Do not remove.
   useEffect(() => {
     console.log("OAPcart", cart);
-  },[cart])
+  }, [cart])
 
   const handleTextChange = (event) => {
-    const htcValue=event.target.value;
+    const htcValue = event.target.value;
     setFormQty((htcValue !== "") ? Number(htcValue) : 0);
   };
 
@@ -56,7 +58,7 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
           placeholder="0"
         />
         <br />
-        <input type="submit" />
+        <input type="submit" value="Buy"/>
       </form>
       {/* <div>
         <Link to={`/products`}>

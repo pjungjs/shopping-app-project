@@ -2,7 +2,7 @@ const express = require("express");
 const orders = express.Router({ mergeParams: true });
 const {
   getAllOrders,
-  getOrder,
+  getOrdersByCustomer,
   createOrder,
   deleteOrder,
   updateOrder,
@@ -18,10 +18,10 @@ orders.get("/", async (req, res) => {
   }
 });
 
-// SHOW ONE
+// SHOW ALL BY CUSTOMER
 orders.get("/:id", async (req, res) => {
   const { id } = req.params;
-  const order = await getOrder(id);
+  const order = await getOrdersByCustomer(id);
   if (order.success) {
     res.status(200).json(order.payload);
   } else {

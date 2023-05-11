@@ -11,10 +11,20 @@ const getAllOrders = async () => {
 };
 
 // GET ONE
-const getOrder = async (id) => {
+// const getOrder = async (id) => {
+//     try {
+//         const oneOrder = await db.one("SELECT * FROM orders WHERE id=$1", id);
+//         return {success: true, payload: oneOrder};
+//     } catch (error) {
+//         return {success: false, payload: error};
+//     }
+// };
+
+// GET ALL BY CUSTOMER
+const getOrdersByCustomer = async (id) => {
     try {
-        const oneOrder = await db.any("SELECT * FROM orders WHERE customer_id=$1", id);
-        return {success: true, payload: oneOrder};
+        const oneOrderByCustomer = await db.any("SELECT * FROM orders WHERE customer_id=$1", id);
+        return {success: true, payload: oneOrderByCustomer};
     } catch (error) {
         return {success: false, payload: error};
     }
@@ -59,4 +69,4 @@ const updateOrder = async (id, order) => {
     }
 };
 
-module.exports = { getAllOrders, getOrder, createOrder, deleteOrder, updateOrder };
+module.exports = { getAllOrders, getOrdersByCustomer, createOrder, deleteOrder, updateOrder };

@@ -2,7 +2,6 @@ import { useState } from "react";
 // import { Link } from "react-router-dom";
 
 export default function OrderAddProduct({ productInStock, cart, setCart, loggedInAs, productID }) {
-  console.log("OAP Cart", cart);
 
   /*
   {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
@@ -24,6 +23,7 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log("handleSubmit triggered");
     if (formQty <= productInStock) {
       setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(formQty) } });
       console.log("OAPCart orderqty <= instock", cart)

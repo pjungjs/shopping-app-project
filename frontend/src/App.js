@@ -24,12 +24,12 @@ import RetailerEditProduct from "./components/Retailers/RetailerEditProduct.jsx"
 import { useEffect } from 'react';
 
 function App() {
-  const [loggedInAs, setLoggedInAs] = useState({id: "Guest"});
+  const [loggedInAs, setLoggedInAs] = useState({id: "Guest", first_name: "Guest"});
   const [cart, setCart] = useState({});
 
   useEffect(() => {
-    console.log("AppCart", cart);
-    console.log("AppCarRef", cart[`customer${loggedInAs.id}`])
+    // console.log("AppCart", cart);
+    // console.log("AppCarRef", cart[`customer${loggedInAs.id}`])
   },[loggedInAs.id, cart])
 
   return (

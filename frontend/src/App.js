@@ -21,10 +21,16 @@ import RetailerProducts from "./components/Retailers/RetailerProducts.jsx";
 import RetailerNewProduct from "./components/Retailers/RetailerNewProduct.jsx";
 import RetailerEditProduct from "./components/Retailers/RetailerEditProduct.jsx";
 
+import { useEffect } from 'react';
 
 function App() {
   const [loggedInAs, setLoggedInAs] = useState({id: "Guest"});
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState({});
+
+  useEffect(() => {
+    console.log("AppCart", cart);
+    console.log("AppCarRef", cart[`customer${loggedInAs.id}`])
+  },[loggedInAs.id, cart])
 
   return (
     <div className="App">
@@ -40,7 +46,7 @@ function App() {
             <Route path="/customers/new" element={<NewCustomer />} />
             <Route path="/customers/:id" element={<CustomerDetails />} />
             <Route path="/customers/:id/edit" element={<EditCustomer setLoggedInAs={setLoggedInAs} />} />
-            <Route path="/customers/:id/cart" element={<CustomerCart loggedInAs={loggedInAs} cart={cart} setCart={setCart} />} />
+            <Route path="/customers/:id/cart" element={<CustomerCart loggedInAs={loggedInAs} customerCart={cart[`customer${loggedInAs.id}`]} setCart={setCart} />} />
             <Route path="/customers/:id/history" element={<CustomerHistory loggedInAs={loggedInAs} />} />
 
             <Route path="/products" element={<Products cart={cart} setCart={setCart} loggedInAs={loggedInAs}/>} />

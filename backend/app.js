@@ -11,9 +11,11 @@ app.use(express.json());
 
 const productController = require("./controllers/productController.js");
 const customerController = require("./controllers/customerController.js");
+const orderController = require("./controllers/orderController.js");
 
 app.use("/products", productController);
 app.use("/customers", customerController);
+app.use("/orders", orderController);
 
 // ROUTES
 app.get("/", (req, res) => {

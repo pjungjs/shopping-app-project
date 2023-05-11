@@ -7,16 +7,20 @@ function NavBar({ loggedInAs }) {
       <Link to="/">
         <h1>Shopping App</h1>
       </Link>
-      {
-        loggedInAs && (
-          <>
+      {loggedInAs.first_name && (
+        <>
+          <p>Welcome
+            {" "}
             <Link to={`customers/${loggedInAs.id}`}>
-              <button>{loggedInAs.first_name}</button>
+              {loggedInAs.first_name}
             </Link>
-            <p>cart</p>
-          </>
-        )
-      }
+            !
+          </p>
+          <Link to={`customers/${loggedInAs.id}/cart`}>
+            Cart
+          </Link>
+        </>
+      )}
     </nav>
   )
 }

@@ -1,10 +1,14 @@
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
     <>
       <a href="#top">
-        <h1>Go to the top</h1>
+        <p>Go to the top</p>
       </a>
+      <Link to="/about">
+        <p>About</p>
+      </Link>
     </>
   )
 }

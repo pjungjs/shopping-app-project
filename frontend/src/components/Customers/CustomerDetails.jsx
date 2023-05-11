@@ -56,6 +56,9 @@ function CustomerDetails() {
           <button>Edit</button>
         </Link>
         <button onClick={() => handleDelete()} style={{"color": "red"}}>Delete</button>
+        <Link to={`/customers/${id}/history`}>
+          <button>Purchase History</button>
+        </Link>
       </div>
     </div>
   );

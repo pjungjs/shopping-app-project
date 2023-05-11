@@ -13,7 +13,7 @@ const getAllOrders = async () => {
 // GET ONE
 const getOrder = async (id) => {
     try {
-        const oneOrder = await db.one("SELECT * FROM orders WHERE id=$1", id);
+        const oneOrder = await db.any("SELECT * FROM orders WHERE customer_id=$1", id);
         return {success: true, payload: oneOrder};
     } catch (error) {
         return {success: false, payload: error};

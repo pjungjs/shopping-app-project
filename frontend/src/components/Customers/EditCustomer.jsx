@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 const API = process.env.REACT_APP_API_URL;
 
-function EditCustomer() {
+function EditCustomer({ setLoggedInAs }) {
   const [editCustomer, setEditCustomer] = useState({
     first_name: "",
     last_name: "",
@@ -46,6 +46,7 @@ function EditCustomer() {
   function handleSubmit(event) {
     event.preventDefault();
     updateCustomer();
+    setLoggedInAs(editCustomer);
   }
 
   return (

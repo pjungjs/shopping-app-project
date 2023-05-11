@@ -1,18 +1,16 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import Product from "./Product.jsx";
-
 const API = process.env.REACT_APP_API_URL;
 
 function Products({ cart, setCart, loggedInAs}) {
-
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     axios.get(`${API}/products`)
     .then((response) => setProducts(response.data))
     .catch((e) => console.warn("catch", e));
-  })
+  }, [])
 
   return (
     <div>
@@ -20,11 +18,10 @@ function Products({ cart, setCart, loggedInAs}) {
       {products.map((product) => {
         return (
           <Product 
-          key = {product.id}
-          product={product}
-          cart={cart}
-          setCart={setCart}
-          loggedInAs={loggedInAs}
+            key={product.id}
+            product={product}
+            cart={cart}
+            setCart={setCart}
           />
         )
       })}

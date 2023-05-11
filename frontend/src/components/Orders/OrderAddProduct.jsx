@@ -1,19 +1,18 @@
 import { Link } from "react-router-dom";
 
-export default function OrderAddProduct({ productInStock, cart, setCart, loggedInAs, productID = 0 }) {
+export default function OrderAddProduct({ productInStock, cart, setCart, loggedInAs, productID }) {
 
   /*
-  If arguments not passed, creates default values.
-  Current program structure never requires productID; placeholder implementation.
+  Changed App.js to specify default loggedInAs.id="Guest".  Below error handling no longer needed.
   {customerGuest: {product0: n}}
   */
-  if (!loggedInAs) {
-    const loggedInAs = { id: "Guest" };
-  }
-  if (!productID) {
-    const productID = "0";
-  }
-  console.log("OAP", loggedInAs.id);
+  // if (!loggedInAs.id) {
+  //   const loggedInAs = { id: "Guest" };
+  // }
+  // if (!productID) {
+  //   const productID = "0";
+  // }
+  //console.log("OAP", loggedInAs.id);
 
   /*
   {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}

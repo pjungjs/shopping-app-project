@@ -23,7 +23,7 @@ import RetailerEditProduct from "./components/Retailers/RetailerEditProduct.jsx"
 
 
 function App() {
-  const [loggedInAs, setLoggedInAs] = useState({});
+  const [loggedInAs, setLoggedInAs] = useState({id: "Guest"});
   const [cart, setCart] = useState([]);
 
   return (

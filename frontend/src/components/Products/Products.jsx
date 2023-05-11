@@ -22,6 +22,7 @@ function Products({ cart, setCart, loggedInAs}) {
             product={product}
             cart={cart}
             setCart={setCart}
+            loggedInAs={loggedInAs}
           />
         )
       })}

@@ -1,33 +1,22 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 export default function OrderAddProduct({ productInStock, cart, setCart, loggedInAs, productID }) {
   console.log("OAP Cart", cart);
 
   /*
-  Changed App.js to specify default loggedInAs.id="Guest".  Below error handling no longer needed.
-  {customerGuest: {product0: n}}
-  */
-  // if (!loggedInAs.id) {
-  //   const loggedInAs = { id: "Guest" };
-  // }
-  // if (!productID) {
-  //   const productID = "0";
-  // }
-  //console.log("OAP", loggedInAs.id);
-
-  /*
   {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
   */
 
+  /*
+  In previous implementation, the form modified cart state specific to customer and product.
+  If customer and product does not exist in state, must create.
+  Otherwise, initial undefined value causes error.
+  However, creating customer-product specific references requires each customer to have
+  a line item for every product in database.  3 customers * 50 items = 150.
+  State "formQty" is used instead to track value.
+  */
   const [formQty, setFormQty] = useState(0);
-
-  //Initializes cart line item if not already extant.
-  // useEffect(() => {
-  //   if (!(cart[`customer${loggedInAs.id}`][`product${product.id}`])) {
-  //     setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${product.id}`]: 0 } });
-  //   }
-  // }, [])
 
   const handleTextChange = (event) => {
     setFormQty(Number(event.target.value));
@@ -36,11 +25,12 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
   const handleSubmit = (event) => {
     event.preventDefault();
     if (formQty <= productInStock) {
+      setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(formQty) } });
       console.log("OAPCart orderqty <= instock", cart)
     } else {
-      // setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(productInStock) } });
-      // event.target.quantity = productInStock;
-      // alert(`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
+      setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(productInStock) } });
+      event.target.quantity = productInStock;
+      alert(`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
       console.log("OAPCart orderqty > instock", cart)
     }
   };
@@ -59,11 +49,11 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
         <br />
         <input type="submit" />
       </form>
-      <div>
+      {/* <div>
         <Link to={`/products`}>
           <button>Return to Products</button>
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }

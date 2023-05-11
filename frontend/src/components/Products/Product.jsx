@@ -1,6 +1,5 @@
 import OrderAddProduct from "../Orders/OrderAddProduct.jsx";
 // import { useState } from "react";
-import { useEffect } from "react";
 
 export default function Product({ product, cart, setCart, loggedInAs }) {
   //  const [orderQuantity, setOrderQuantity] = useState("");
@@ -25,13 +24,6 @@ export default function Product({ product, cart, setCart, loggedInAs }) {
   //     alert("Something went wrong! Try again later.");
   //   }
   // }
-
-  //Initializes cart line item if not already extant.
-  useEffect(() => {
-    if (!(cart[`customer${loggedInAs.id}`][`product${product.id}`])) {
-      setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${product.id}`]: 0 } });
-    }
-  }, [])
 
   return (
     <div className="Product">

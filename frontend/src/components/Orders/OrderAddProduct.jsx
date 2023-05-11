@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function OrderAddProduct({ productInStock, cart, setCart, loggedInAs, productID }) {
+  console.log("OAP Cart", cart);
 
   /*
   Changed App.js to specify default loggedInAs.id="Guest".  Below error handling no longer needed.
@@ -19,19 +20,27 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
   {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
   */
 
+  const [formQty, setFormQty] = useState(0);
+
+  //Initializes cart line item if not already extant.
+  // useEffect(() => {
+  //   if (!(cart[`customer${loggedInAs.id}`][`product${product.id}`])) {
+  //     setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${product.id}`]: 0 } });
+  //   }
+  // }, [])
+
   const handleTextChange = (event) => {
-    setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(event.target.value) } });
+    setFormQty(Number(event.target.value));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (event.target.quantity <= productInStock) {
-      // Does nothing, as setCart already in handleTextChange.  By the time submitted, already done.
+    if (formQty <= productInStock) {
       console.log("OAPCart orderqty <= instock", cart)
     } else {
-      setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(productInStock) } });
-      event.target.quantity = productInStock;
-      alert(`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
+      // setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(productInStock) } });
+      // event.target.quantity = productInStock;
+      // alert(`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
       console.log("OAPCart orderqty > instock", cart)
     }
   };
@@ -42,7 +51,7 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
         <label htmlFor="quantity">Quantity:</label>
         <input
           id="quantity"
-          value={cart[`customer${loggedInAs.id}`][`product${productID}`]}
+          value={formQty}
           type="number"
           onChange={handleTextChange}
           placeholder={productID}

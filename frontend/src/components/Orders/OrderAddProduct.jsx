@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function OrderAddProduct({ productInStock, cart, setCart, loggedInAs, productID }) {
@@ -18,8 +19,8 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
   {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
   */
 
-  const handleTextChange = (event) => {  
-    setCart({ ...cart, [`customer${loggedInAs.id}`]: {...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(event.target.value)} });
+  const handleTextChange = (event) => {
+    setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(event.target.value) } });
   };
 
   const handleSubmit = (event) => {
@@ -28,7 +29,7 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
       // Does nothing, as setCart already in handleTextChange.  By the time submitted, already done.
       console.log("OAPCart orderqty <= instock", cart)
     } else {
-      setCart({ ...cart, [`customer${loggedInAs.id}`]: {...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(productInStock)} });
+      setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(productInStock) } });
       event.target.quantity = productInStock;
       alert(`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
       console.log("OAPCart orderqty > instock", cart)

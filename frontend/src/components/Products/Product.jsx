@@ -1,8 +1,9 @@
 import OrderAddProduct from "../Orders/OrderAddProduct.jsx";
 // import { useState } from "react";
+import { useEffect } from "react";
 
 export default function Product({ product, cart, setCart, loggedInAs }) {
-//  const [orderQuantity, setOrderQuantity] = useState("");
+  //  const [orderQuantity, setOrderQuantity] = useState("");
 
   // function handleNumberChange(event) {
   //   setOrderQuantity(event.target.value);
@@ -25,6 +26,13 @@ export default function Product({ product, cart, setCart, loggedInAs }) {
   //   }
   // }
 
+  //Initializes cart line item if not already extant.
+  useEffect(() => {
+    if (!(cart[`customer${loggedInAs.id}`][`product${product.id}`])) {
+      setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${product.id}`]: 0 } });
+    }
+  }, [])
+
   return (
     <div className="Product">
       <h4>{product.name}</h4>
@@ -35,7 +43,7 @@ export default function Product({ product, cart, setCart, loggedInAs }) {
       <p>Rarity: {product.card_rarity}</p>
       <p>Card ID:  {product.card_id}</p>
       <p>UPC:  {product.product_upc}</p>
-{/*       
+      {/*       
       <input
         id="quantity"
         type="number"
@@ -43,13 +51,13 @@ export default function Product({ product, cart, setCart, loggedInAs }) {
         onChange={(event) => handleNumberChange(event)}
       />
       <button onClick={() => handleBuyButton()}>Buy</button> */}
-      <OrderAddProduct 
-      key = {product.id}
-      productID = {product.id}
-      productInStock = {product.quantity_in_stock}
-      cart = {cart}
-      setCart = {setCart}
-      loggedInAs = {loggedInAs}
+      <OrderAddProduct
+        key={product.id}
+        productID={product.id}
+        productInStock={product.quantity_in_stock}
+        cart={cart}
+        setCart={setCart}
+        loggedInAs={loggedInAs}
       />
     </div>
   )

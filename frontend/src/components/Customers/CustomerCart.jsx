@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ProductCustomerCart from "../Products/ProductCustomerCart.jsx";
 
 const API = process.env.REACT_APP_API_URL;
 
@@ -9,6 +8,11 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
 
   const [editProduct, setEditProduct] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+
+  /*
+  customerCart sample: {product1: 5, product2: 12}
+  itemIDArray sample: [1, 2]
+  */
 
   const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
 
@@ -26,6 +30,8 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
 
   const navigate = useNavigate();
 
+  const spaces = 5;
+
   const gimmeSpace = (spaces) => {
     return "\u00A0".repeat(spaces)
   }
@@ -35,37 +41,34 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
   }
 
   const listCartItems = () => {
+    // within map, ${JSON.stringify(filteredProducts)} ok
     if (Object.keys(customerCart).length === 0) {
       return (
         <div>No items in cart</div>
       )
     } else {
       return (
-        <div>
-          {itemIDArray.map((productID) => {
-            return (
-              <div key={productID}>{`${JSON.stringify(filteredProducts)}`}</div>
-              // <ProductCustomerCart
-              //   key={productID}
-              //   productID={productID}
-              //   filteredProducts={filteredProducts}
-              //   customerCart={customerCart}
-
-              // />
-            )
-            // return (
-            //   <div key={productID}>
-            //     <span> Item ID: {productID}</span>
-            //     {gimmeSpace(5)}
-            //     <span>Product Description: {`ham, ${delayedOutput(productID)}`}</span>
-            //     {gimmeSpace(5)}
-            //     <span>Qty Ordered: {customerCart[`product${productID}`]}</span>
-            //     {gimmeSpace(5)}
-            //   </div>
-            // )
-          })
-          }
-        </div>
+        <table>
+          <tbody>
+            {filteredProducts.map((productID) => {
+              return (
+                <tr key={productID.id}>
+                  <td>
+                  <img src={require(`../Products${(productID.image_url).replace(".","")}`)} alt={`${productID.description}`} style={{"width": "50px"}}></img>
+                  </td>
+                  <td>
+                    Item: {productID.name}
+                  </td>
+                  {gimmeSpace(spaces)}
+                  <td>
+                    Quantity Ordered: {customerCart[`product${productID.id}`]}
+                  </td>
+                </tr>
+              )
+            })
+            }
+          </tbody>
+        </table>
       )
     }
   }

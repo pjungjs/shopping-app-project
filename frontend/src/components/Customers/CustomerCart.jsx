@@ -6,10 +6,19 @@ const API = process.env.REACT_APP_API_URL;
 export default function CustomerCart({ loggedInAs, setCart, customerCart = {} }) {
 
   const [editProduct, setEditProduct] = useState([]);
-  const [lineOrder, setLineOrder] = useState({});
+  const [filteredProducts, setFilteredProducts] = useState({});
 
+  /*
+  return products
+  */
   useEffect(() => {
-
+    axios.get(`${API}/products`)
+      .then((response) => {
+        setFilteredProducts(response.data)
+        console.log("unfiltered", response.data);
+        console.log("filtered", response.data.filter(product => Object.keys(customerCart).map(lineItemOnOrder => lineItemOnOrder.split("product")).includes(product.id) ));
+  })
+      .catch((e) => console.warn("catch", e));
   }, [])
   // const [editOrder, setEditOrder] = useState([]);
   const navigate = useNavigate();

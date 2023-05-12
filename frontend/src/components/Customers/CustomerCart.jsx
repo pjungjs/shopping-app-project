@@ -8,7 +8,7 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
   const [editProduct, setEditProduct] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState({});
 
-  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => lineItemOnOrder.replace("product",""));
+  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product","")));
 
   /*
   return products
@@ -16,17 +16,12 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
   useEffect(() => {
     axios.get(`${API}/products`)
       .then((response) => {
-        setFilteredProducts(response.data)
-        console.log("unfiltered", response.data);
-        console.log("semifiltered", response.data.filter(product => product.id === 1));
-        console.log("unkey", Object.keys(customerCart));
-        console.log("key", Object.keys(customerCart).map(lineItemOnOrder => lineItemOnOrder.replace("product","")));
-        console.log("dupekey", itemIDArray);
-        console.log("filtered", response.data.filter(product => Object.keys(customerCart).map(lineItemOnOrder => lineItemOnOrder.split("product")).includes(product.id) ));
+        setFilteredProducts(response.data.filter(product => itemIDArray.includes(product.id)))
+        console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
   })
       .catch((e) => console.warn("catch", e));
   }, [])
-  // const [editOrder, setEditOrder] = useState([]);
+
   const navigate = useNavigate();
 
   const gimmeSpace = (spaces) => {
@@ -41,7 +36,7 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
     } else {
       return (
         <div>
-          {Object.keys(customerCart).map((lineItemOnOrder) => {
+          {itemIDArray.map((productID) => {
             // axios.get(`${API}/products/${lineItemOnOrder.split("product")}`)
             //   .then((response) => {
             //     console.log(response.data);
@@ -51,10 +46,13 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
             //   })
 
             return (
-              <div key={lineItemOnOrder}>
-                <span> Item ID: {lineItemOnOrder.split("product")}</span>
-                {gimmeSpace(20)}
-                <span>Qty Ordered: {customerCart[lineItemOnOrder]}</span>
+              <div key={productID}>
+                <span> Item ID: {productID}</span>
+                {gimmeSpace(5)}
+                <span>Product Description: {filteredProducts.filter(product => product.id === productID)}</span>
+                {gimmeSpace(5)}
+                <span>Qty Ordered: {customerCart[`product${productID}`]}</span>
+                {gimmeSpace(5)}
               </div>
             )
           })

@@ -8,6 +8,8 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
   const [editProduct, setEditProduct] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState({});
 
+  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => lineItemOnOrder.replace("product",""));
+
   /*
   return products
   */
@@ -16,6 +18,10 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
       .then((response) => {
         setFilteredProducts(response.data)
         console.log("unfiltered", response.data);
+        console.log("semifiltered", response.data.filter(product => product.id === 1));
+        console.log("unkey", Object.keys(customerCart));
+        console.log("key", Object.keys(customerCart).map(lineItemOnOrder => lineItemOnOrder.replace("product","")));
+        console.log("dupekey", itemIDArray);
         console.log("filtered", response.data.filter(product => Object.keys(customerCart).map(lineItemOnOrder => lineItemOnOrder.split("product")).includes(product.id) ));
   })
       .catch((e) => console.warn("catch", e));

@@ -1,14 +1,16 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import ProductCustomerCart from "../Products/ProductCustomerCart.jsx";
+
 const API = process.env.REACT_APP_API_URL;
 
 export default function CustomerCart({ loggedInAs, setCart, customerCart = {} }) {
 
   const [editProduct, setEditProduct] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState({});
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
-  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product","")));
+  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
 
   /*
   return products
@@ -18,7 +20,7 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
       .then((response) => {
         setFilteredProducts(response.data.filter(product => itemIDArray.includes(product.id)))
         console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
-  })
+      })
       .catch((e) => console.warn("catch", e));
   }, [])
 
@@ -26,6 +28,10 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
 
   const gimmeSpace = (spaces) => {
     return "\u00A0".repeat(spaces)
+  }
+
+  const delayedOutput = async (productID) => {
+    return filteredProducts.find(product => product.id === productID).description;
   }
 
   const listCartItems = () => {
@@ -37,24 +43,26 @@ export default function CustomerCart({ loggedInAs, setCart, customerCart = {} })
       return (
         <div>
           {itemIDArray.map((productID) => {
-            // axios.get(`${API}/products/${lineItemOnOrder.split("product")}`)
-            //   .then((response) => {
-            //     console.log(response.data);
-            //     setLineOrder(response.data);
-            //   }).catch((e) => {
-            //     console.warn("catch", e);
-            //   })
-
             return (
-              <div key={productID}>
-                <span> Item ID: {productID}</span>
-                {gimmeSpace(5)}
-                <span>Product Description: {filteredProducts.filter(product => product.id === productID)}</span>
-                {gimmeSpace(5)}
-                <span>Qty Ordered: {customerCart[`product${productID}`]}</span>
-                {gimmeSpace(5)}
-              </div>
+              <div key={productID}>{`${JSON.stringify(filteredProducts)}`}</div>
+              // <ProductCustomerCart
+              //   key={productID}
+              //   productID={productID}
+              //   filteredProducts={filteredProducts}
+              //   customerCart={customerCart}
+
+              // />
             )
+            // return (
+            //   <div key={productID}>
+            //     <span> Item ID: {productID}</span>
+            //     {gimmeSpace(5)}
+            //     <span>Product Description: {`ham, ${delayedOutput(productID)}`}</span>
+            //     {gimmeSpace(5)}
+            //     <span>Qty Ordered: {customerCart[`product${productID}`]}</span>
+            //     {gimmeSpace(5)}
+            //   </div>
+            // )
           })
           }
         </div>

@@ -23,9 +23,9 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
   }, [formQty])
 
   //useEffect code for testing.  Do not remove.
-  useEffect(() => {
-    console.log("OAPcart", cart);
-  }, [cart])
+  // useEffect(() => {
+  //   console.log("OAPcart", cart);
+  // }, [cart])
 
   const handleTextChange = (event) => {
     const htcValue = event.target.value;
@@ -34,7 +34,7 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("handleSubmit triggered");
+    // console.log("OAP handleSubmit triggered");
     if (formQty <= productInStock) {
       setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(formQty) } });
       // console.log("OAPCart orderqty <= instock", cart)

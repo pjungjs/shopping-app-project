@@ -2,22 +2,7 @@
 
 "FIX" - search term for flagged code
 
-FIX - Change "Buy" button to "Add To Cart"
-
-FIX - CustomerHistory redundant alt attribute.
-
 FIX - handleCheckout is called without interposition of anonymous function.  Will this cause trigger on render?
-
-Import cart into customerCart.
-
-schema.sql
-price DECIMAL(10,2) NOT NULL,
-quantity_in_stock INT NOT NULL,
-
-to
-
-price DECIMAL(10,2) NOT NULL CHECK (price >=0),
-quantity_in_stock INT NOT NULL CHECK (quantity >=0),
 
 Delete dummy data "cart"
 

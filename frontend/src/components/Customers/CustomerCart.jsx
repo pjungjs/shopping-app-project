@@ -31,9 +31,11 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
 
   const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
 
-  /*
-  return products
-  */
+  // useEffect bug track
+  useEffect(() => {
+    console.log("CCUEBug cart", cart)
+  }, [cart])
+
   useEffect(() => {
     axios.get(`${API}/products`)
       .then((response) => {
@@ -148,25 +150,30 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
   const handleCheckout = () => {
     console.log("Attempting handleCheckout");
     filteredProducts.forEach((product) => {
+      console.log("CCFP product", product)
+      console.log("CCFP remplacant", { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) } )
       axios
-        .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
+        //.put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
+        .put(`${API}/products/${product.id}`, { ...product})
+
         .then(() => {
           console.log("Product put attempted.");
-          //inner axios start
-          axios
-            .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
-            .then(() => {
-              // edit state start
-              //temporary variable as removeFromObject.  Spread operator does NOT work correctly
-              const tempCart = deepCopyObject(cart);
-              delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
-              setCart(tempCart);
-              // edit state end
-            },
-              (error) => console.error(`Axios handleCheckout product ${product.id} add order`, error)
-            )
-            .catch((c) => console.warn(`catch handleCheckout product ${product.id} add order`, c));
-          // inner axios end
+          console.log()
+          // //inner axios start
+          // axios
+          //   .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
+          //   .then(() => {
+          //     // edit state start
+          //     //temporary variable as removeFromObject.  Spread operator does NOT work correctly
+          //     const tempCart = deepCopyObject(cart);
+          //     delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
+          //     setCart(tempCart);
+          //     // edit state end
+          //   },
+          //     (error) => console.error(`Axios handleCheckout product ${product.id} add order`, error)
+          //   )
+          //   .catch((c) => console.warn(`catch handleCheckout product ${product.id} add order`, c));
+          // // inner axios end
         },
           (error) => console.error(`Axios handleCheckout error on ${product.id} edit product`, error)
         )

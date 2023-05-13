@@ -58,7 +58,7 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
           placeholder="0"
         />
         <br />
-        <input type="submit" value="Buy"/>
+        <input type="submit" value="Add To Cart"/>
       </form>
       {/* <div>
         <Link to={`/products`}>

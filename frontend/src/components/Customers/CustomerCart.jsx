@@ -6,6 +6,8 @@ FIX - Change "Buy" button to "Add To Cart"
 
 FIX - CustomerHistory redundant alt attribute.
 
+FIX - handleCheckout is called without interposition of anonymous function.  Will this cause trigger on render?
+
 Import cart into customerCart.
 
 schema.sql
@@ -27,14 +29,14 @@ import { useState, useEffect } from "react";
 
 const API = process.env.REACT_APP_API_URL;
 
-export default function CustomerCart({ loggedInAs, cart = {}, setCart, customerCart = {} }) {
+export default function CustomerCart({ loggedInAs, cart, setCart, customerCart = {} }) {
 
   // const [editProduct, setEditProduct] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
-  // FIX dummy data
+  // dummy data
   // {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
-  cart = { [`customer${loggedInAs.id}`]: customerCart };
+  //cart = { [`customer${loggedInAs.id}`]: customerCart };
 
   /*
   customerCart sample: {product1: 5, product2: 12}

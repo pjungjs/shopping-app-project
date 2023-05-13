@@ -2,6 +2,8 @@
 
 "FIX" - search term for flagged code
 
+FIX - Change "Buy" button to "Add To Cart"
+
 FIX - CustomerHistory redundant alt attribute.
 
 Import cart into customerCart.
@@ -49,18 +51,18 @@ export default function CustomerCart({ loggedInAs, cart = {}, setCart, customerC
     axios.get(`${API}/products`)
       .then((response) => {
         setFilteredProducts(response.data.filter(product => itemIDArray.includes(product.id)))
-        console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
+        //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
       })
       .catch((e) => console.warn("catch", e));
   }, [itemIDArray])
 
   //const navigate = useNavigate();
 
-  const spaces = 5;
+  // const spaces = 5;
 
-  const gimmeSpace = (spaces) => {
-    return "\u00A0".repeat(spaces)
-  }
+  // const gimmeSpace = (spaces) => {
+  //   return "\u00A0".repeat(spaces)
+  // }
 
   // const delayedOutput = async (productID) => {
   //   return filteredProducts.find(product => product.id === productID).description;
@@ -87,7 +89,6 @@ export default function CustomerCart({ loggedInAs, cart = {}, setCart, customerC
                   <td>
                     {product.name}
                   </td>
-                  {gimmeSpace(spaces)}
                   <td>
                     Quantity Ordered: {customerCart[`product${product.id}`]}
                   </td>
@@ -154,13 +155,16 @@ export default function CustomerCart({ loggedInAs, cart = {}, setCart, customerC
     FIX:  When checkout complete, render "checkout complete".
     FIX:  Asynchronous removal of multiple product from cart MAY not trigger issue.  .then makes sequential?
     FIX:  What happens, exactly, when customer1:{}? 
+    FIX:  Really, put product put inside itself?  Fix to add order to SQL, but first, fix product qty not updating.
   */
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
+    console.log("Attempting handleCheckout");
     filteredProducts.forEach((product) => {
       axios
         .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
         .then(() => {
+          console.log("Product put attempted.");
           //inner axios start
           axios
             .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
@@ -180,8 +184,6 @@ export default function CustomerCart({ loggedInAs, cart = {}, setCart, customerC
           (error) => console.error(`Axios handleCheckout error on ${product.id} edit product`, error)
         )
         .catch((c) => console.warn(`catch handleCheckout product ${product.id} edit product`, c));
-
-
     })
   }
 
@@ -193,7 +195,7 @@ export default function CustomerCart({ loggedInAs, cart = {}, setCart, customerC
         {loggedInAs.first_name}'s Cart
       </h1>
       {listCartItems()}
-      <button onClick={() => handleCheckout}>Checkout</button>
+      <button onClick={handleCheckout}>Checkout</button>
     </div>
   )
 

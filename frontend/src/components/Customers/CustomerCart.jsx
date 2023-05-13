@@ -15,7 +15,6 @@ import { useState, useEffect } from "react";
 const API = process.env.REACT_APP_API_URL;
 
 export default function CustomerCart({ loggedInAs, cart, setCart, customerCart = {} }) {
-
   // const [editProduct, setEditProduct] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
@@ -39,11 +38,14 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
   useEffect(() => {
     axios.get(`${API}/products`)
       .then((response) => {
+        // FIX:  Infinite render loop.  Removing itemIDArray from dependency seems to stop loop, but
+        // then lint error triggers.
+        console.log("Looping");
         setFilteredProducts(response.data.filter(product => itemIDArray.includes(product.id)))
         //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
       })
       .catch((e) => console.warn("catch", e));
-  }, [itemIDArray])
+  }, [])
 
   //const navigate = useNavigate();
 
@@ -143,6 +145,8 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
     FIX:  What happens, exactly, when customer1:{}? 
     FIX:  Really, put product put inside itself?  Fix to add order to SQL, but first, fix product qty not updating.
     FIX:  Stick deepcopyObject, gimmeSpace, sort functions inside other components as exports.
+
+    FIX:  handleCheckout only operates one item at a time.  Possibly re-render.
   */
 
   const handleCheckout = () => {
@@ -195,7 +199,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
           (error) => console.error(`Axios handleCheckout error on ${product.id} edit product`, error)
         )
         .catch((c) => console.warn(`catch handleCheckout product ${product.id} edit product`, c));
-    })
+    }) // forEach
   }
 
   // Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?

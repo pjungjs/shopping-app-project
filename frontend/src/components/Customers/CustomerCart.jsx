@@ -154,15 +154,27 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
           });
         // axios post
 
-        const tempCart = deepCopyObject(cart);
-        delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
-        setCart(tempCart);
+        setCart((previous) => {
+          const tempCart = deepCopyObject(previous);
+          delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
+          return tempCart;
+        });
       });
       // promises
 
       // wait until all promises performed with Promise.all
       await Promise.all(promises);
       setCheckoutComplete(true);
+      
+      /*
+      Alternate implementation setCart
+      const tempCart = deepCopyObject(cart);
+      for (const productToDelete of itemIDArray) {
+          delete tempCart[`customer${loggedInAs.id}`][`product${productToDelete}`];
+      }
+      setCart(tempCart);
+      */
+      
       console.log("All items processed OK.")
     } catch (error) {
       console.error("handleCheckout error", error)

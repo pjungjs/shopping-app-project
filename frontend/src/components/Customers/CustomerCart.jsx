@@ -1,33 +1,25 @@
 /*
-
 "FIX" - search term for flagged code
-
-FIX - handleCheckout is called without interposition of anonymous function.  Will this cause trigger on render?
-
-Delete dummy data "cart"
-
 */
 
 import axios from "axios";
 import { useState, useEffect } from "react";
-//import { useNavigate } from "react-router-dom";
 
 const API = process.env.REACT_APP_API_URL;
+const {
+  deepCopyObject
+} = require("../../utilities/utilityFunctions.js");
 
 export default function CustomerCart({ loggedInAs, cart, setCart, customerCart = {} }) {
-  // const [editProduct, setEditProduct] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-
-  // dummy data
-  // {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
-  //cart = { [`customer${loggedInAs.id}`]: customerCart };
 
   /*
+  cart sample: {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
   customerCart sample: {product1: 5, product2: 12}
   itemIDArray sample: [1, 2]
   customerCart[`product${X}`] returns quantity ordered of product X.
   */
 
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [itemIDArray, setItemIDArray] = useState([]);
 
   useEffect(() => {
@@ -44,71 +36,17 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
       .catch((e) => console.warn("catch", e));
   }, [itemIDArray]);
 
-  //const [hamster, setHamster] = useState([]);
   // useEffect bug track
   useEffect(() => {
     console.log("CCUEBug cart", cart)
   }, [cart])
 
-
-  //const navigate = useNavigate();
-
-  // const spaces = 5;
-
-  // const gimmeSpace = (spaces) => {
-  //   return "\u00A0".repeat(spaces)
-  // }
-
-  // const delayedOutput = async (productID) => {
-  //   return filteredProducts.find(product => product.id === productID).description;
-  // }
-
   // Calling function allows control statements.  Only ternary expressions may be called from normal component return.
   // Prevents hanging "null" references.
-
-  /*
-  start original itemIDArray implementation
-
-  useEffect(() => {
-    axios.get(`${API}/products`)
-      .then((response) => {
-        // FIX:  Infinite render loop.  Removing itemIDArray from dependency seems to stop loop, but
-        // then lint error triggers.  Probably just need to look to see how itemIDArray is modified within
-        // the useEffect.
-        console.log("Looping");
-        // Setting data equal to const fail resolve trigger.  
-        const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
-        setFilteredProducts(filteredList);
-        //setHamster(filteredList);
-        //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
-      })
-      .catch((e) => console.warn("catch", e));
-    //setHamster successfully avoids infinite re-render.
-    // console.log(hamster);
-  }, [])
-  
-  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
-
- 
-  // End original itemIDArray implementation
-  */
-
   /*
   Will deep copy objects inside objects, as in cart state.
   If there are arrays inside objects, this will make funny results, so don't do it.
   */
-  const deepCopyObject = (objectToDuplicate) => {
-    const returnObject = {};
-    for (const key in objectToDuplicate) {
-      // null is object type in Javascript.
-      if (typeof objectToDuplicate[key] === 'object' && objectToDuplicate[key] !== null) {
-        returnObject[key] = deepCopyObject(objectToDuplicate[key]);
-      } else {
-        returnObject[key] = objectToDuplicate[key];
-      }
-    }
-    return returnObject;
-  }
 
   const listCartItems = () => {
     // within map, ${JSON.stringify(filteredProducts)} ok
@@ -191,20 +129,6 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
         .then(() => {
           console.log("Product put attempted.");
           var date = new Date();
-
-          // test output
-          // console.log(JSON.stringify({
-          //   product_id:  Number(product.id),
-          //   customer_id: Number(loggedInAs.id),
-          //   product_qty: Number(customerCart[`product${product.id}`]),
-          //   date:
-          //   date.toLocaleString("default", {year: "numeric" })
-          //   +"-"
-          //   +date.toLocaleString("default", {month: "2-digit"})
-          //   +"-"
-          //   +date.toLocaleString("default", {day: "2-digit"})
-          // }))
-
           //inner axios start
           axios
             .post(`${API}/orders`, {
@@ -220,7 +144,6 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
             })
             .then(() => {
               // edit state start
-              //temporary variable as removeFromObject.  Spread operator does NOT work correctly
               const tempCart = deepCopyObject(cart);
               delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
               setCart(tempCart);
@@ -238,8 +161,10 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
     // forEach
   }
 
-  // Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?
-  //Regardless, the first functionality is checkout.
+  /*
+  FIX: Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?
+  //Regardless, first functionality is checkout, and state-based changes *should* not trigger infinite re-render
+  */
   return (
     <div>
       <h1>
@@ -249,7 +174,41 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
       <button onClick={handleCheckout}>Checkout</button>
     </div>
   )
+}
 
+/*
+  start original itemIDArray implementation
+
+  useEffect(() => {
+    axios.get(`${API}/products`)
+      .then((response) => {
+        // FIX:  Infinite render loop.  Removing itemIDArray from dependency seems to stop loop, but
+        // then lint error triggers.  Probably just need to look to see how itemIDArray is modified within
+        // the useEffect.
+        console.log("Looping");
+        // Setting data equal to const fail resolve trigger.
+        const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
+        setFilteredProducts(filteredList);
+        //setHamster(filteredList);
+        //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
+      })
+      .catch((e) => console.warn("catch", e));
+    //setHamster successfully avoids infinite re-render.
+    // console.log(hamster);
+  }, [])
+
+  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
+
+
+  // End original itemIDArray implementation
+*/
+
+/*
+Legacy Jinseok code
+*/
+
+  //const navigate = useNavigate();
+  // const [editProduct, setEditProduct] = useState([]);
   // async function updateProduct() {
   //   await axios
   //     .put(`${API}/products/${id}`, editProduct)
@@ -335,4 +294,3 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
   //     <button onClick={() => handleCheckoutButton()}>Checkout</button>
   //   </>
   // )
-}

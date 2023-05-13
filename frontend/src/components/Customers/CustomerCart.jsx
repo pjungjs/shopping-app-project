@@ -39,7 +39,8 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
     axios.get(`${API}/products`)
       .then((response) => {
         // FIX:  Infinite render loop.  Removing itemIDArray from dependency seems to stop loop, but
-        // then lint error triggers.
+        // then lint error triggers.  Probably just need to look to see how itemIDArray is modified within
+        // the useEffect.
         console.log("Looping");
         setFilteredProducts(response.data.filter(product => itemIDArray.includes(product.id)))
         //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))

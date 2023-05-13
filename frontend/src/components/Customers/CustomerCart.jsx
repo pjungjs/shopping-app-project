@@ -138,42 +138,59 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
   Sample cart data
     {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
 
-    FIX: Note to self:  Number on operation, perhaps.  Subtraction without setting independent variables to number.  Should force conversion?
-    FIX:  No render dependent directly on "cart" state.  Removing item from "cart" state should not trigger re-render
-    unless dependent variable?
-    FIX:  When checkout complete, render "checkout complete".
+
     FIX:  Asynchronous removal of multiple product from cart MAY not trigger issue.  .then makes sequential?
     FIX:  What happens, exactly, when customer1:{}? 
     FIX:  Really, put product put inside itself?  Fix to add order to SQL, but first, fix product qty not updating.
+    FIX:  Stick deepcopyObject, gimmeSpace, sort functions inside other components as exports.
   */
 
   const handleCheckout = () => {
-    console.log("Attempting handleCheckout");
     filteredProducts.forEach((product) => {
-      console.log("CCFP product", product)
-      console.log("CCFP remplacant", { ...product, quantity_in_stock: Number(product.quantity_in_stock) - Number(customerCart[`product${product.id}`]) } )
       axios
         .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
-        //.put(`${API}/products/${product.id}`, { ...product})
-
         .then(() => {
           console.log("Product put attempted.");
-          console.log()
-          // //inner axios start
-          // axios
-          //   .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
-          //   .then(() => {
-          //     // edit state start
-          //     //temporary variable as removeFromObject.  Spread operator does NOT work correctly
-          //     const tempCart = deepCopyObject(cart);
-          //     delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
-          //     setCart(tempCart);
-          //     // edit state end
-          //   },
-          //     (error) => console.error(`Axios handleCheckout product ${product.id} add order`, error)
-          //   )
-          //   .catch((c) => console.warn(`catch handleCheckout product ${product.id} add order`, c));
-          // // inner axios end
+          var date = new Date();
+
+          // test output
+          // console.log(JSON.stringify({
+          //   product_id:  Number(product.id),
+          //   customer_id: Number(loggedInAs.id),
+          //   product_qty: Number(customerCart[`product${product.id}`]),
+          //   date:
+          //   date.toLocaleString("default", {year: "numeric" })
+          //   +"-"
+          //   +date.toLocaleString("default", {month: "2-digit"})
+          //   +"-"
+          //   +date.toLocaleString("default", {day: "2-digit"})
+          // }))
+
+          //inner axios start
+          axios
+            .post(`${API}/orders`, {
+              product_id:  Number(product.id),
+              customer_id: Number(loggedInAs.id),
+              product_qty: Number(customerCart[`product${product.id}`]),
+              date:
+              date.toLocaleString("default", {year: "numeric" })
+              +"-"
+              +date.toLocaleString("default", {month: "2-digit"})
+              +"-"
+              +date.toLocaleString("default", {day: "2-digit"})
+            })
+            .then(() => {
+              // edit state start
+              //temporary variable as removeFromObject.  Spread operator does NOT work correctly
+              const tempCart = deepCopyObject(cart);
+              delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
+              setCart(tempCart);
+              // edit state end
+            },
+              (error) => console.error(`Axios handleCheckout product ${product.id} add order`, error)
+            )
+            .catch((c) => console.warn(`catch handleCheckout product ${product.id} add order`, c));
+          // inner axios end
         },
           (error) => console.error(`Axios handleCheckout error on ${product.id} edit product`, error)
         )

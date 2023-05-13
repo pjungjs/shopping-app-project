@@ -119,12 +119,12 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
   const handleCheckout = async () => {
     try {
       // promises is array of async
-      const promises = filteredProducts.forEach(async (product) => {
-        console.log(`handleCheckout put ${product.id}`);
+      const promises = filteredProducts.map(async (product) => {
+        console.log(`handleCheckout put, item ${product.id}`);
         await axios.put(`${API}/products/${product.id}`,
           {
             ...product,
-            quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`])
+            quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]),
           })
         // put
 
@@ -140,7 +140,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
             + "-"
             + date.toLocaleString("default", { month: "2-digit" })
             + "-"
-            + date.toLocaleString("default", { day: "2-digit" })
+            + date.toLocaleString("default", { day: "2-digit" }),
           });
         // axios post
 
@@ -156,7 +156,8 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
     } catch (error) {
       console.error("handleCheckout error", error)
     }
-  }
+  };
+  // handleCheckout
 
   /*
   FIX: Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?

@@ -28,7 +28,21 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
   customerCart[`product${X}`] returns quantity ordered of product X.
   */
 
-  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
+  const [itemIDArray, setItemIDArray] = useState([]);
+
+  useEffect(() => {
+    setItemIDArray(Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", ""))))
+  }, [customerCart])
+
+  useEffect(() => {
+    axios.get(`${API}/products`)
+      .then((response) => {
+        console.log("Looping");
+        const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
+        setFilteredProducts(filteredList);
+      })
+      .catch((e) => console.warn("catch", e));
+  }, [itemIDArray]);
 
   //const [hamster, setHamster] = useState([]);
   // useEffect bug track
@@ -36,23 +50,6 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
     console.log("CCUEBug cart", cart)
   }, [cart])
 
-  useEffect(() => {
-    axios.get(`${API}/products`)
-      .then((response) => {
-        // FIX:  Infinite render loop.  Removing itemIDArray from dependency seems to stop loop, but
-        // then lint error triggers.  Probably just need to look to see how itemIDArray is modified within
-        // the useEffect.
-        console.log("Looping");
-        // Setting data equal to const fail resolve trigger.  
-        const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
-        setFilteredProducts(filteredList);
-        //setHamster(filteredList);
-        //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
-      })
-      .catch((e) => console.warn("catch", e));
-      //setHamster successfully avoids infinite re-render.
-      // console.log(hamster);
-  }, [])
 
   //const navigate = useNavigate();
 
@@ -68,6 +65,51 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
 
   // Calling function allows control statements.  Only ternary expressions may be called from normal component return.
   // Prevents hanging "null" references.
+
+  /*
+  start original itemIDArray implementation
+
+  useEffect(() => {
+    axios.get(`${API}/products`)
+      .then((response) => {
+        // FIX:  Infinite render loop.  Removing itemIDArray from dependency seems to stop loop, but
+        // then lint error triggers.  Probably just need to look to see how itemIDArray is modified within
+        // the useEffect.
+        console.log("Looping");
+        // Setting data equal to const fail resolve trigger.  
+        const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
+        setFilteredProducts(filteredList);
+        //setHamster(filteredList);
+        //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
+      })
+      .catch((e) => console.warn("catch", e));
+    //setHamster successfully avoids infinite re-render.
+    // console.log(hamster);
+  }, [])
+  
+  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
+
+ 
+  // End original itemIDArray implementation
+  */
+
+  /*
+  Will deep copy objects inside objects, as in cart state.
+  If there are arrays inside objects, this will make funny results, so don't do it.
+  */
+  const deepCopyObject = (objectToDuplicate) => {
+    const returnObject = {};
+    for (const key in objectToDuplicate) {
+      // null is object type in Javascript.
+      if (typeof objectToDuplicate[key] === 'object' && objectToDuplicate[key] !== null) {
+        returnObject[key] = deepCopyObject(objectToDuplicate[key]);
+      } else {
+        returnObject[key] = objectToDuplicate[key];
+      }
+    }
+    return returnObject;
+  }
+
   const listCartItems = () => {
     // within map, ${JSON.stringify(filteredProducts)} ok
     if (Object.keys(customerCart).length === 0) {
@@ -100,23 +142,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
       )
     }
   }
-
-  /*
-  Will deep copy objects inside objects, as in cart state.
-  If there are arrays inside objects, this will make funny results, so don't do it.
-  */
-  const deepCopyObject = (objectToDuplicate) => {
-    const returnObject = {};
-    for (const key in objectToDuplicate) {
-      // null is object type in Javascript.
-      if (typeof objectToDuplicate[key] === 'object' && objectToDuplicate[key] !== null) {
-        returnObject[key] = deepCopyObject(objectToDuplicate[key]);
-      } else {
-        returnObject[key] = objectToDuplicate[key];
-      }
-    }
-    return returnObject;
-  }
+  //listCartItems
   /*
   
   CREATE TABLE products (
@@ -182,15 +208,15 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
           //inner axios start
           axios
             .post(`${API}/orders`, {
-              product_id:  Number(product.id),
+              product_id: Number(product.id),
               customer_id: Number(loggedInAs.id),
               product_qty: Number(customerCart[`product${product.id}`]),
               date:
-              date.toLocaleString("default", {year: "numeric" })
-              +"-"
-              +date.toLocaleString("default", {month: "2-digit"})
-              +"-"
-              +date.toLocaleString("default", {day: "2-digit"})
+                date.toLocaleString("default", { year: "numeric" })
+                + "-"
+                + date.toLocaleString("default", { month: "2-digit" })
+                + "-"
+                + date.toLocaleString("default", { day: "2-digit" })
             })
             .then(() => {
               // edit state start
@@ -208,7 +234,8 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
           (error) => console.error(`Axios handleCheckout error on ${product.id} edit product`, error)
         )
         .catch((c) => console.warn(`catch handleCheckout product ${product.id} edit product`, c));
-    }) // forEach
+    })
+    // forEach
   }
 
   // Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?

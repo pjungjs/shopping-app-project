@@ -55,7 +55,7 @@ const updateProduct = async (id, product) => {
         );
         return {success: true, payload: updatedProduct};
     } catch (error) {
-        return {success: true, payload: error};
+        return {success: false, payload: error};
     }
 };
 

@@ -151,10 +151,10 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
     console.log("Attempting handleCheckout");
     filteredProducts.forEach((product) => {
       console.log("CCFP product", product)
-      console.log("CCFP remplacant", { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) } )
+      console.log("CCFP remplacant", { ...product, quantity_in_stock: Number(product.quantity_in_stock) - Number(customerCart[`product${product.id}`]) } )
       axios
-        //.put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
-        .put(`${API}/products/${product.id}`, { ...product})
+        .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
+        //.put(`${API}/products/${product.id}`, { ...product})
 
         .then(() => {
           console.log("Product put attempted.");

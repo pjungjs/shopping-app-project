@@ -42,7 +42,7 @@ export default function Products({ cart, setCart, loggedInAs }) {
         return (
           <div>
             <Product
-              key={product.id}
+              key={`Product${product.id}`}
               product={product}
               cart={cart}
               setCart={setCart}
@@ -50,7 +50,7 @@ export default function Products({ cart, setCart, loggedInAs }) {
 
             />
             <OrderAddProduct
-              key={product.id}
+              key={`OrderAddProduct${product.id}`}
               productID={product.id}
               productInStock={product.quantity_in_stock}
               cart={cart}

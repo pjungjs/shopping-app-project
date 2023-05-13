@@ -30,6 +30,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
 
   const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
 
+  //const [hamster, setHamster] = useState([]);
   // useEffect bug track
   useEffect(() => {
     console.log("CCUEBug cart", cart)
@@ -42,10 +43,15 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
         // then lint error triggers.  Probably just need to look to see how itemIDArray is modified within
         // the useEffect.
         console.log("Looping");
-        setFilteredProducts(response.data.filter(product => itemIDArray.includes(product.id)))
+        // Setting data equal to const fail resolve trigger.  
+        const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
+        setFilteredProducts(filteredList);
+        //setHamster(filteredList);
         //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
       })
       .catch((e) => console.warn("catch", e));
+      //setHamster successfully avoids infinite re-render.
+      // console.log(hamster);
   }, [])
 
   //const navigate = useNavigate();
@@ -73,8 +79,9 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
         <table>
           <tbody>
             {filteredProducts.map((product) => {
+              console.log("listCartItems filteredProducts");
               return (
-                <tr key={product.id}>
+                <tr key={`listCartItems${product.id}`}>
                   <td>
                     <img src={require(`../Products${(product.image_url).replace(".", "")}`)} alt={`${product.description}`} style={{ "width": "50px" }}></img>
                   </td>
@@ -152,6 +159,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
 
   const handleCheckout = () => {
     filteredProducts.forEach((product) => {
+      console.log("handleCheckout filteredProducts");
       axios
         .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
         .then(() => {

@@ -112,20 +112,76 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
   Sample cart data
     {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
 
-
-    FIX:  Asynchronous removal of multiple product from cart MAY not trigger issue.  .then makes sequential?
     FIX:  What happens, exactly, when customer1:{}? 
-    FIX:  Really, put product put inside itself?  Fix to add order to SQL, but first, fix product qty not updating.
-    FIX:  Stick deepcopyObject, gimmeSpace, sort functions inside other components as exports.
-
     FIX:  handleCheckout only operates one item at a time.  Possibly re-render.
   */
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
+    try {
+      // promises is array of async
+      const promises = filteredProducts.forEach(async (product) => {
+        console.log(`handleCheckout put ${product.id}`);
+        await axios.put(`${API}/products/${product.id}`,
+          {
+            ...product,
+            quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`])
+          })
+        // put
+
+        const date = new Date();
+
+        await axios.post(`${API}/orders`,
+          {
+            product_id: Number(product.id),
+            customer_id: Number(loggedInAs.id),
+            product_qty: Number(customerCart[`product${product.id}`]),
+            date:
+            date.toLocaleString("default", { year: "numeric" })
+            + "-"
+            + date.toLocaleString("default", { month: "2-digit" })
+            + "-"
+            + date.toLocaleString("default", { day: "2-digit" })
+          });
+        // axios post
+
+        const tempCart = deepCopyObject(cart);
+        delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
+        setCart(tempCart);
+      });
+      // promises
+
+      // wait until all promises performed with Promise.all
+      await Promise.all(promises);
+      console.log("All items processed OK.")
+    } catch (error) {
+      console.error("handleCheckout error", error)
+    }
+  }
+
+  /*
+  FIX: Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?
+  //Regardless, first functionality is checkout, and state-based changes *should* not trigger infinite re-render
+  */
+  return (
+    <div>
+      <h1>
+        {loggedInAs.first_name}'s Cart
+      </h1>
+      {listCartItems()}
+      <button onClick={handleCheckout}>Checkout</button>
+    </div>
+  )
+}
+
+/*
+
+legacy handleCheckout (pre Promise all)
+const handleCheckout = async () => {
     filteredProducts.forEach((product) => {
       console.log("handleCheckout filteredProducts");
       axios
         .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
+        // end put
         .then(() => {
           console.log("Product put attempted.");
           var date = new Date();
@@ -157,24 +213,11 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
           (error) => console.error(`Axios handleCheckout error on ${product.id} edit product`, error)
         )
         .catch((c) => console.warn(`catch handleCheckout product ${product.id} edit product`, c));
+
     })
     // forEach
   }
-
-  /*
-  FIX: Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?
-  //Regardless, first functionality is checkout, and state-based changes *should* not trigger infinite re-render
-  */
-  return (
-    <div>
-      <h1>
-        {loggedInAs.first_name}'s Cart
-      </h1>
-      {listCartItems()}
-      <button onClick={handleCheckout}>Checkout</button>
-    </div>
-  )
-}
+*/
 
 /*
   start original itemIDArray implementation

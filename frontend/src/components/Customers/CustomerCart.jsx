@@ -21,6 +21,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
 
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [itemIDArray, setItemIDArray] = useState([]);
+  const [checkoutComplete, setCheckoutComplete] = useState(false);
 
   useEffect(() => {
     setItemIDArray(Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", ""))))
@@ -53,6 +54,11 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
     if (Object.keys(customerCart).length === 0) {
       return (
         <div>No items in cart</div>
+      )
+    } else if (checkoutComplete) {
+      console.log("listCartItems checkout complete", cart)
+      return (
+        <div>Checkout complete.</div>
       )
     } else {
       return (
@@ -114,6 +120,10 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
 
     FIX:  What happens, exactly, when customer1:{}? 
     FIX:  handleCheckout only operates one item at a time.  Possibly re-render.
+
+    FIX:  Promise.all works ok, but visual render not fixed yet.
+    FIX:  Negative quanitities may be entered in cart
+    FIX: Test negative quantities into SQL quantities.
   */
 
   const handleCheckout = async () => {
@@ -152,6 +162,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
 
       // wait until all promises performed with Promise.all
       await Promise.all(promises);
+      setCheckoutComplete(true);
       console.log("All items processed OK.")
     } catch (error) {
       console.error("handleCheckout error", error)
@@ -161,7 +172,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
 
   /*
   FIX: Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?
-  //Regardless, first functionality is checkout, and state-based changes *should* not trigger infinite re-render
+  Regardless, first functionality is checkout, and state-based changes *should* not trigger infinite re-render
   */
   return (
     <div>

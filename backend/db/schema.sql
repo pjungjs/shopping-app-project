@@ -30,8 +30,8 @@ CREATE TABLE products (
   name VARCHAR(100) NOT NULL,
   description VARCHAR(120) NOT NULL,
   image_url VARCHAR(120),
-  price DECIMAL(10,2) NOT NULL,
-  quantity_in_stock INT NOT NULL,
+  price DECIMAL(10,2) NOT NULL CHECK (price >=0),
+  quantity_in_stock INT NOT NULL CHECK (price >=0),
   card_id VARCHAR(12),
   card_rarity VARCHAR(18),
   product_upc CHAR(12)

@@ -32,7 +32,7 @@ function CustomerHistory({ loggedInAs }) {
 
     return (
       <>
-        <img src={require(`../Products/${imagePath}`)} alt="card image" style={{"width": "100px"}}/>
+        <img src={require(`../Products/${imagePath}`)} alt="card" style={{"width": "100px"}}/>
         <p>{history.date}</p>
         <p>{boughtProduct.name}</p>
         <p>{history.product_qty} * ${boughtProduct.price} = ${cardTotalPrice}</p>
@@ -58,6 +58,8 @@ function CustomerHistory({ loggedInAs }) {
                     {showHistory(history, boughtProduct)}
                   </li>
                 )
+              } else {
+                return null;
               }
             })}
           </ol>

@@ -16,6 +16,7 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
   State "formQty" is used instead to track value.
   */
   const [formQty, setFormQty] = useState(0);
+  const [confirmAddToCart, setConfirmAddToCart] = useState(false);
 
   //useEffect code for testing.  Do not remove.
   useEffect(() => {
@@ -23,9 +24,9 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
   }, [formQty])
 
   //useEffect code for testing.  Do not remove.
-  useEffect(() => {
-    console.log("OAPcart", cart);
-  }, [cart])
+  // useEffect(() => {
+  //   console.log("OAPcart", cart);
+  // }, [cart])
 
   const handleTextChange = (event) => {
     const htcValue = event.target.value;
@@ -34,16 +35,18 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("handleSubmit triggered");
+    // console.log("OAP handleSubmit triggered");
     if (formQty <= productInStock) {
       setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(formQty) } });
+      setConfirmAddToCart(true);
       // console.log("OAPCart orderqty <= instock", cart)
     } else {
       setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(productInStock) } });
-      setFormQty(productInStock);
+      setConfirmAddToCart(true);
       alert(`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
       // console.log("OAPCart orderqty > instock", cart)
     }
+    setFormQty(0);
   };
 
   return (
@@ -58,8 +61,11 @@ export default function OrderAddProduct({ productInStock, cart, setCart, loggedI
           placeholder="0"
         />
         <br />
-        <input type="submit" value="Buy"/>
+        <input type="submit" value="Add To Cart"/>
       </form>
+      <div>
+        {confirmAddToCart ? "Order added to cart" : ""}
+      </div>
       {/* <div>
         <Link to={`/products`}>
           <button>Return to Products</button>

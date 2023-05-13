@@ -46,7 +46,7 @@ function App() {
             <Route path="/customers/new" element={<NewCustomer />} />
             <Route path="/customers/:id" element={<CustomerDetails />} />
             <Route path="/customers/:id/edit" element={<EditCustomer setLoggedInAs={setLoggedInAs} />} />
-            <Route path="/customers/:id/cart" element={<CustomerCart loggedInAs={loggedInAs} customerCart={cart[`customer${loggedInAs.id}`]} setCart={setCart} />} />
+            <Route path="/customers/:id/cart" element={<CustomerCart loggedInAs={loggedInAs} customerCart={cart[`customer${loggedInAs.id}`]} cart={cart} setCart={setCart} />} />
             <Route path="/customers/:id/history" element={<CustomerHistory loggedInAs={loggedInAs} />} />
 
             <Route path="/products" element={<Products cart={cart} setCart={setCart} loggedInAs={loggedInAs}/>} />

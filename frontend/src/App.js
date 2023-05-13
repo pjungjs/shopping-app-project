@@ -20,6 +20,7 @@ import Product from "./components/Products/Product.jsx";
 import RetailerProducts from "./components/Retailers/RetailerProducts.jsx";
 import RetailerNewProduct from "./components/Retailers/RetailerNewProduct.jsx";
 import RetailerEditProduct from "./components/Retailers/RetailerEditProduct.jsx";
+import RetailerShowProduct from "./components/Retailers/RetailerShowProduct.jsx";
 
 import { useEffect } from 'react';
 
@@ -54,7 +55,8 @@ function App() {
             
             <Route path="/retailer/products" element={<RetailerProducts />} />
             <Route path="/retailer/products/new" element={<RetailerNewProduct />} />
-            <Route path="/retailer/product/:id/edit" element={<RetailerEditProduct />} />
+            <Route exact path="/retailer/products/:id" element={<RetailerShowProduct />} />
+            <Route path="/retailer/products/:id/edit" element={<RetailerEditProduct />} />
             
             <Route path="/about" element={<About />} />
 

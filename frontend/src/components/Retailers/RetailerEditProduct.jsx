@@ -147,9 +147,9 @@ export default function RetailerEditProduct() {
                     required
                 />
                 <br />
-                <label htmlFor="product_UPC">Product UPC:</label>
+                <label htmlFor="product_upc">Product UPC:</label>
                 <input
-                    id="product_UPC"
+                    id="product_upc"
                     value={product.product_upc}
                     type="text"
                     onChange={handleTextChange}

@@ -1,76 +1,49 @@
-import { useState, useEffect } from "react";
-// import { Link } from "react-router-dom";
+import { useState } from "react";
 
-export default function OrderAddProduct({ productInStock, cart, setCart, loggedInAs, productID }) {
-
-  /*
-  {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
-  */
-
-  /*
-  In previous implementation, the form modified cart state specific to customer and product.
-  If customer and product does not exist in state, must create.
-  Otherwise, initial undefined value causes error.
-  However, creating customer-product specific references requires each customer to have
-  a line item for every product in database.  3 customers * 50 items = 150.
-  State "formQty" is used instead to track value.
-  */
-  const [formQty, setFormQty] = useState(0);
+export default function OrderAddProduct({ cart, setCart, loggedInAs, productCardId, productInStock }) {
+  const [orderQuantity, setOrderQuantity] = useState(0);
+  const [finalOrderQuantity, setFinalOrderQuantity] = useState(0);
   const [confirmAddToCart, setConfirmAddToCart] = useState(false);
-
-  //useEffect code for testing.  Do not remove.
-  useEffect(() => {
-    //console.log("formQty", formQty);
-  }, [formQty])
-
-  //useEffect code for testing.  Do not remove.
-  // useEffect(() => {
-  //   console.log("OAPcart", cart);
-  // }, [cart])
-
-  const handleTextChange = (event) => {
-    const htcValue = event.target.value;
-    setFormQty((htcValue !== "") ? Number(htcValue) : 0);
+  
+  const handleNumberChange = (event) => {
+    setOrderQuantity(Number(event.target.value));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // console.log("OAP handleSubmit triggered");
-    if (formQty <= productInStock) {
-      setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(formQty) } });
-      setConfirmAddToCart(true);
-      // console.log("OAPCart orderqty <= instock", cart)
+  const handleAddToCart = () => {
+    if (orderQuantity === 0) {
+      return alert("Quantity must be above 0. Please try again");
+    } else if (orderQuantity <= productInStock) {
+      setCart({ ...cart, [loggedInAs.first_name]: {...cart[loggedInAs.first_name], [productCardId]: orderQuantity } });
     } else {
-      setCart({ ...cart, [`customer${loggedInAs.id}`]: { ...cart[`customer${loggedInAs.id}`], [`product${productID}`]: Number(productInStock) } });
-      setConfirmAddToCart(true);
-      alert(`Sorry, only ${productInStock} of ${event.target.quantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
-      // console.log("OAPCart orderqty > instock", cart)
+      setCart({ ...cart, [loggedInAs.first_name]: {...cart[loggedInAs.first_name], [productCardId]: productInStock } });
+      alert(`Sorry, only ${productInStock} of ${orderQuantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
     }
-    setFormQty(0);
+    setConfirmAddToCart(true);
+    setFinalOrderQuantity(orderQuantity <= productInStock ? orderQuantity : productInStock);
+    setOrderQuantity(0);
   };
 
   return (
-    <div className="New">
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="quantity">Quantity:</label>
-        <input
-          id="quantity"
-          value={formQty === 0 ? "" : formQty}
-          type="number"
-          onChange={handleTextChange}
-          placeholder="0"
-        />
-        <br />
-        <input type="submit" value="Add To Cart"/>
-      </form>
-      <div>
-        {confirmAddToCart ? "Order added to cart" : ""}
-      </div>
-      {/* <div>
-        <Link to={`/products`}>
-          <button>Return to Products</button>
-        </Link>
-      </div> */}
-    </div>
+    <>
+      {
+        loggedInAs.first_name === "Guest" ? (
+          ""
+        ) : (
+          <div className="New">
+            <input
+              id="quantity"
+              type="number"
+              value={orderQuantity === 0 ? "" : orderQuantity}
+              placeholder="0"
+              onChange={(event) => handleNumberChange(event)}
+            />
+            <button onClick={() => handleAddToCart()}>Add To Cart</button>
+            <div>
+              {confirmAddToCart ? `${finalOrderQuantity} order(s) added to the Cart!` : ""}
+            </div>
+          </div>
+        )
+      }
+    </>
   );
 }

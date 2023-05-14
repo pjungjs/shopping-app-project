@@ -1,363 +1,229 @@
-/*
-"FIX" - search term for flagged code
-*/
-
 import axios from "axios";
 import { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
+import { Table } from "react-bootstrap";
 const API = process.env.REACT_APP_API_URL;
 const {
   deepCopyObject
 } = require("../../utilities/utilityFunctions.js");
 
-export default function CustomerCart({ loggedInAs, cart, setCart, customerCart = {} }) {
-
-  /*
-  cart sample: {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
-  customerCart sample: {product1: 5, product2: 12}
-  itemIDArray sample: [1, 2]
-  customerCart[`product${X}`] returns quantity ordered of product X.
-  */
-
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [itemIDArray, setItemIDArray] = useState([]);
-  const [checkoutComplete, setCheckoutComplete] = useState(false);
+export default function CustomerCart({ loggedInAs, cart, setCart }) {
+  const [products, setProducts] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setItemIDArray(Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", ""))))
-  }, [customerCart])
+    async function getProducts() {
+      await axios
+        .get(`${API}/products`)
+        .then((response) => setProducts(response.data))
+        .catch((error) => console.warn("catch", error))
+    };
+    getProducts();
+  }, [])
 
-  useEffect(() => {
-    axios.get(`${API}/products`)
-      .then((response) => {
-  //      console.log("Looping");
-        const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
-        setFilteredProducts(filteredList);
+  async function updateEachProduct(product) {
+    await axios
+      .put(`${API}/products/${product.id}`, {
+        ...product,
+        quantity_in_stock: Number(product.quantity_in_stock - cart[loggedInAs.first_name][product.card_id])
       })
-      .catch((e) => console.warn("catch", e));
-  }, [itemIDArray]);
-
-  // useEffect bug track
-  useEffect(() => {
-    console.log("CCUEBug cart", cart)
-  }, [cart])
-
-  // Calling function allows control statements.  Only ternary expressions may be called from normal component return.
-  // Prevents hanging "null" references.
-  /*
-  Will deep copy objects inside objects, as in cart state.
-  If there are arrays inside objects, this will make funny results, so don't do it.
-  */
-
-  const listCartItems = () => {
-    // within map, ${JSON.stringify(filteredProducts)} ok
-    if (Object.keys(customerCart).length === 0) {
-      return (
-        <div>No items in cart</div>
-      )
-    } else if (checkoutComplete) {
-      console.log("listCartItems checkout complete", cart)
-      return (
-        <div>Checkout complete.</div>
-      )
-    } else {
-      return (
-        <table>
-          <tbody>
-            {filteredProducts.map((product) => {
-              console.log("listCartItems filteredProducts");
-              return (
-                <tr key={`listCartItems${product.id}`}>
-                  <td>
-                    <img src={require(`../Products${(product.image_url).replace(".", "")}`)} alt={`${product.description}`} style={{ "width": "50px" }}></img>
-                  </td>
-                  <td>
-                    {product.name}
-                  </td>
-                  <td>
-                    Quantity Ordered: {customerCart[`product${product.id}`]}
-                  </td>
-                </tr>
-              )
-            })
-            }
-          </tbody>
-        </table>
-      )
-    }
-  }
-  //listCartItems
-  /*
-  
-  CREATE TABLE products (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description VARCHAR(120) NOT NULL,
-    image_url VARCHAR(120),
-    price DECIMAL(10,2) NOT NULL,
-    quantity_in_stock INT NOT NULL,
-    card_id VARCHAR(12),
-    card_rarity VARCHAR(18),
-    product_upc CHAR(12)
-  );
-  ('Roronoa Zoro', 'Supernovas/Straw Hat Crew', './images/OP01-001.jpg', 7.95, 60, 'OP01-001', 'Leader', 'none'),
-  
-  
-  CREATE TABLE orders (
-    id SERIAL PRIMARY KEY,
-    product_id INT REFERENCES products (id) ON DELETE CASCADE,
-    customer_id INT REFERENCES customers (id) ON DELETE CASCADE,
-    product_qty INT NOT NULL,
-    date DATE NOT NULL
-  );
-  (1, 1, 5, '2023-05-08'),
-  
-    Line by line, attempts to modify SQL products.  If successful, add order to SQL and edit state.
-    If not successful, returns error.
-
-  Sample cart data
-    {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
-
-    FIX:  What happens, exactly, when customer1:{}? 
-    FIX:  handleCheckout only operates one item at a time.  Possibly re-render.
-
-    FIX:  Promise.all works ok, but visual render not fixed yet.
-    FIX:  Negative quanitities may be entered in cart
-    FIX: Test negative quantities into SQL quantities.
-  */
-
-  const handleCheckout = async () => {
-    try {
-      // promises is array of async
-      const promises = filteredProducts.map(async (product) => {
-        console.log(`handleCheckout put, item ${product.id}`);
-        await axios.put(`${API}/products/${product.id}`,
-          {
-            ...product,
-            quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]),
-          })
-        // put
-
-        const date = new Date();
-
-        await axios.post(`${API}/orders`,
-          {
-            product_id: Number(product.id),
-            customer_id: Number(loggedInAs.id),
-            product_qty: Number(customerCart[`product${product.id}`]),
-            date:
-            date.toLocaleString("default", { year: "numeric" })
-            + "-"
-            + date.toLocaleString("default", { month: "2-digit" })
-            + "-"
-            + date.toLocaleString("default", { day: "2-digit" }),
-          });
-        // axios post
-
-        setCart((previous) => {
-          const tempCart = deepCopyObject(previous);
-          delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
-          return tempCart;
-        });
-      });
-      // promises
-
-      // wait until all promises performed with Promise.all
-      await Promise.all(promises);
-      setCheckoutComplete(true);
-      
-      /*
-      Alternate implementation setCart
-      const tempCart = deepCopyObject(cart);
-      for (const productToDelete of itemIDArray) {
-          delete tempCart[`customer${loggedInAs.id}`][`product${productToDelete}`];
-      }
-      setCart(tempCart);
-      */
-      
-      console.log("All items processed OK.")
-    } catch (error) {
-      console.error("handleCheckout error", error)
-    }
+      .then(() => {
+        console.log("update each product successful");
+        createOrders(product);
+      })
+      .catch((error) => console.warn("catch", error))
   };
-  // handleCheckout
 
-  /*
-  FIX: Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?
-  Regardless, first functionality is checkout, and state-based changes *should* not trigger infinite re-render
-  */
+  async function createOrders(product) {
+    const date = new Date();
+    const formattedDate = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
+    
+    await axios
+      .post(`${API}/orders`, {
+        product_id:  Number(product.id),
+        customer_id: Number(loggedInAs.id),
+        product_qty: Number(cart[loggedInAs.first_name][product.card_id]),
+        date: formattedDate
+      })
+      .then(() => console.log("create order successful"))
+      .catch((error) => console.warn("catch", error))
+  };
+
+  const filterProducts = () => {
+    return products.filter(product => Object.keys(cart[loggedInAs.first_name]).includes(product.card_id));
+  }
+
+  const formatPrice = (price) => {
+    const usDollar = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    });
+    return usDollar.format(price);
+  }
+
+  const handleCheckout = () => {
+    filterProducts().forEach((product) => updateEachProduct(product));
+    alert("Your Purchase was successful! Please come again!");
+    navigate("/products");
+
+  }
+*/
+
+
   return (
     <div>
       <h1>
         {loggedInAs.first_name}'s Cart
       </h1>
-      {listCartItems()}
-      <button onClick={handleCheckout}>Checkout</button>
+      {
+        Object.keys(cart).length === 0
+        ? (
+          <>
+            <p>No items in cart</p>
+            <button onClick={() => navigate("/products")}>Back to Products</button>
+          </>
+        ) : (
+          <>
+            <Table striped>
+              <tbody>
+                {filterProducts().map((product) => {
+                  return (
+                    <tr key={product.id}>
+                      <td>
+                        <img src={require(`../Products${(product.image_url).replace(".", "")}`)} alt={`${product.description}`} style={{ "width": "100px" }}></img>
+                      </td>
+                      <td>
+                        {product.name}
+                      </td>
+                      <td>
+                        Quantity Ordered: {cart[loggedInAs.first_name][product.card_id]}
+                      </td>
+                      <td>
+                        {formatPrice(product.price)}
+                      </td>
+                    </tr>
+                  )
+                })
+                }
+              </tbody>
+            </Table>
+            <h3>Total Price: {formatPrice(totalPrice)}</h3>
+            <button onClick={() => handleCheckout()}>Checkout</button>
+          </>
+        )
+      }
     </div>
   )
-}
-
-/*
-
-legacy handleCheckout (pre Promise all)
-const handleCheckout = async () => {
-    filteredProducts.forEach((product) => {
-      console.log("handleCheckout filteredProducts");
-      axios
-        .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
-        // end put
-        .then(() => {
-          console.log("Product put attempted.");
-          var date = new Date();
-          //inner axios start
-          axios
-            .post(`${API}/orders`, {
-              product_id: Number(product.id),
-              customer_id: Number(loggedInAs.id),
-              product_qty: Number(customerCart[`product${product.id}`]),
-              date:
-                date.toLocaleString("default", { year: "numeric" })
-                + "-"
-                + date.toLocaleString("default", { month: "2-digit" })
-                + "-"
-                + date.toLocaleString("default", { day: "2-digit" })
-            })
-            .then(() => {
-              // edit state start
-              const tempCart = deepCopyObject(cart);
-              delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
-              setCart(tempCart);
-              // edit state end
-            },
-              (error) => console.error(`Axios handleCheckout product ${product.id} add order`, error)
-            )
-            .catch((c) => console.warn(`catch handleCheckout product ${product.id} add order`, c));
-          // inner axios end
-        },
-          (error) => console.error(`Axios handleCheckout error on ${product.id} edit product`, error)
-        )
-        .catch((c) => console.warn(`catch handleCheckout product ${product.id} edit product`, c));
-
-    })
-    // forEach
-  }
-*/
-
-/*
-  start original itemIDArray implementation
-
-  useEffect(() => {
-    axios.get(`${API}/products`)
-      .then((response) => {
-        // FIX:  Infinite render loop.  Removing itemIDArray from dependency seems to stop loop, but
-        // then lint error triggers.  Probably just need to look to see how itemIDArray is modified within
-        // the useEffect.
-        console.log("Looping");
-        // Setting data equal to const fail resolve trigger.
-        const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
-        setFilteredProducts(filteredList);
-        //setHamster(filteredList);
-        //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
-      })
-      .catch((e) => console.warn("catch", e));
-    //setHamster successfully avoids infinite re-render.
-    // console.log(hamster);
-  }, [])
-
-  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
 
 
-  // End original itemIDArray implementation
-*/
 
-/*
-Legacy Jinseok code
-*/
 
-  //const navigate = useNavigate();
-  // const [editProduct, setEditProduct] = useState([]);
-  // async function updateProduct() {
-  //   await axios
-  //     .put(`${API}/products/${id}`, editProduct)
-  //     .then((response) => setEditProduct(response.data))
-  //     .catch((error) => console.warn("Error: PUT", error))
-  // }
 
-  // async function updateOrder() {
-  //   await axios
-  //     .put(`${API}/customers/${id}`, editOrder)
-  //     .then((response) => setEditOrder(response.data))
-  //     .catch((error) => console.warn("Error: PUT", error))
-  // }
 
-  // function handleCheckoutButton() {
 
-  //   let totalAmount = 0;
-  //   cart.forEach((order) => {
-  //     //order[0] is the quantity
-  //     //order[1] is the product object
 
-  //     //to calculate quantity * product price
-  //     totalAmount += Number(order[0]) * Number(order[1].price);
 
-  //     //since it could be multiple item on the cart,
-  //     //must update all of them on the database row.
-  //     setEditProduct([...editProduct,
-  //       {
-  //         name: order[1].name,
-  //         description: order[1].description,
-  //         image_url: order[1].image_url,
-  //         price: order[1].price,
-  //         quantity_in_stock: order[1].quantity_in_stock - order[0],
-  //         card_id: order[1].card_id,
-  //         card_rarity: order[1].card_rarity,
-  //         product_upc: order[1].product_upc
-  //       }
-  //     ])
-  //     setEditOrder([...editOrder,
-  //       {
-  //         product_id: order[1].id,
-  //         customer_id: loggedInAs.id,
-  //         product_qty: order[0].product_qty,
-  //         date: new Date()
-  //       }
-  //     ])
-  //   })
 
-  //   if (window.confirm(`Purchase total amount of $${totalAmount.toFixed(2)}?`)) {
-  //     //after user confirming the purchase
-  //     //it will loop through all the items updated from the cart and update it to the database
-  //     //since the amount of edited products = orders, I set up only one loop.
-  //     editProduct.forEach((product) => {
-  //       updateProduct();
-  //       updateOrder();
-  //     })
-  //     navigate(`/products`);
+  // const [filteredProducts, setFilteredProducts] = useState([]);
+  // const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API}/products`)
+  //     .then((response) => setFilteredProducts(response.data.filter(product => itemIDArray.includes(product.id))))
+  //     .catch((error) => console.warn("catch", error));
+  // }, [])
+
+  // const listCartItems = () => {
+  //   if (Object.keys(customerCart).length === 0) {
+  //     return (
+  //       <div>No items in cart</div>
+  //     )
+  //   } else {
+  //     return (
+  //       <table>
+  //         <tbody>
+  //           {filteredProducts.map((product) => {
+  //             return (
+  //               <tr key={product.id}>
+  //                 <td>
+  //                   <img src={require(`../Products${(product.image_url).replace(".", "")}`)} alt={`${product.description}`} style={{ "width": "50px" }}></img>
+  //                 </td>
+  //                 <td>
+  //                   {product.name}
+  //                 </td>
+  //                 <td>
+  //                   Quantity Ordered: {customerCart[`product${product.id}`]}
+  //                 </td>
+  //               </tr>
+  //             )
+  //           })
+  //           }
+  //         </tbody>
+  //       </table>
+  //     )
   //   }
   // }
 
-  // return (
-  //   <>
-  //     {loggedInAs.first_name &&
-  //       <h1>{loggedInAs.first_name}'s Cart</h1>
-  //     }
-  //     {
-  //       cart.lengh === 0
-  //       ? ""
-  //       : (
-  //         <>
-  //         {/* need to fix this */}
-  //           {cart.map((item) => <li key={item.id}>{item.name} - ${item.price}</li>)}
-  //         </>
-  //       )
-  //     }
 
-  //     <button onClick={() => {
-  //       // setCart({});
-  //       navigate(`/products`);
-  //     }}>
-  //       Empty my Cart
-  //     </button>
-  //     <button onClick={() => handleCheckoutButton()}>Checkout</button>
-  //   </>
+  // const deepCopyObject = (objectToDuplicate) => {
+  //   const returnObject = {};
+  //   for (const key in objectToDuplicate) {
+  //     if (typeof objectToDuplicate[key] === 'object' && objectToDuplicate[key] !== null) {
+  //       returnObject[key] = deepCopyObject(objectToDuplicate[key]);
+  //     } else {
+  //       returnObject[key] = objectToDuplicate[key];
+  //     }
+  //   }
+  //   return returnObject;
+  // }
+
+  // const handleCheckout = () => {
+  //   filteredProducts.forEach((product) => {
+  //     axios
+  //       .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
+  //       .then(() => {
+  //         console.log("Product put attempted.");
+  //         var date = new Date();
+
+  //         axios
+  //           .post(`${API}/orders`, {
+  //             product_id:  Number(product.id),
+  //             customer_id: Number(loggedInAs.id),
+  //             product_qty: Number(customerCart[`product${product.id}`]),
+  //             date:
+  //             date.toLocaleString("default", {year: "numeric" })
+  //             +"-"
+  //             +date.toLocaleString("default", {month: "2-digit"})
+  //             +"-"
+  //             +date.toLocaleString("default", {day: "2-digit"})
+  //           })
+  //           .then(() => {
+  //             const tempCart = deepCopyObject(cart);
+  //             delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
+  //             setCart(tempCart);
+
+  //           },
+  //             (error) => console.error(`Axios handleCheckout product ${product.id} add order`, error)
+  //           )
+  //           .catch((c) => console.warn(`catch handleCheckout product ${product.id} add order`, c));
+
+  //       },
+  //         (error) => console.error(`Axios handleCheckout error on ${product.id} edit product`, error)
+  //       )
+  //       .catch((c) => console.warn(`catch handleCheckout product ${product.id} edit product`, c));
+  //   })
+  // }
+
+  // return (
+  //   <div>
+  //     <h1>
+  //       {loggedInAs.first_name}'s Cart
+  //     </h1>
+  //     {listCartItems()}
+  //     <button onClick={handleCheckout}>Checkout</button>
+  //   </div>
   // )
+}
+

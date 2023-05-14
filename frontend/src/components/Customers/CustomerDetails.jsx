@@ -43,6 +43,7 @@ function CustomerDetails() {
 
   return (
     <div className="Customer-Details">
+      <h1>Settings</h1>
       <div>
         <h2>{first_name} {last_name}</h2>
         <p>{phone}</p>
@@ -56,6 +57,7 @@ function CustomerDetails() {
           <button>Edit</button>
         </Link>
         <button onClick={() => handleDelete()} style={{"color": "red"}}>Delete</button>
+        <br/>
         <Link to={`/customers/${id}/history`}>
           <button>Purchase History</button>
         </Link>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { gimmeSpace } from "../utilities/utilityFunctions";
 
 function NavBar({ loggedInAs }) {
 
@@ -18,6 +19,10 @@ function NavBar({ loggedInAs }) {
           </p>
           <Link to={`customers/${loggedInAs.id}/cart`}>
             Cart
+          </Link>
+          {gimmeSpace(5)}
+          <Link to={`retailer/products/new`}>
+            Enter New Product
           </Link>
         </>
       )}

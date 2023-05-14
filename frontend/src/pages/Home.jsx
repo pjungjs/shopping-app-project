@@ -9,7 +9,7 @@ function Home() {
       <Link to="/customers">
         <button>Customer</button>
       </Link>
-      <Link to="/">
+      <Link to="/retailer/products">
         <button>Retailer</button>
       </Link>
     </div>

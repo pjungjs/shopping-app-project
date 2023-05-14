@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table } from "react-bootstrap";
 const API = process.env.REACT_APP_API_URL;
+const {
+  deepCopyObject
+} = require("../../utilities/utilityFunctions.js");
 
 export default function CustomerCart({ loggedInAs, cart, setCart }) {
   const [products, setProducts] = useState([]);
@@ -63,7 +66,10 @@ export default function CustomerCart({ loggedInAs, cart, setCart }) {
     filterProducts().forEach((product) => updateEachProduct(product));
     alert("Your Purchase was successful! Please come again!");
     navigate("/products");
+
   }
+*/
+
 
   return (
     <div>
@@ -109,6 +115,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart }) {
       }
     </div>
   )
+
 
 
 
@@ -209,7 +216,6 @@ export default function CustomerCart({ loggedInAs, cart, setCart }) {
   //   })
   // }
 
-
   // return (
   //   <div>
   //     <h1>
@@ -220,3 +226,4 @@ export default function CustomerCart({ loggedInAs, cart, setCart }) {
   //   </div>
   // )
 }
+

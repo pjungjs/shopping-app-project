@@ -1,9 +1,12 @@
+
 import { Card } from  "react-bootstrap";
 import OrderAddProduct from "../Orders/OrderAddProduct.jsx";
+
 
 export default function Product({ cart, setCart, product, loggedInAs }) {
 
   return (
+
     <div>
       <Card className="d-flex align-items-center h-100">
         <Card.Img
@@ -33,6 +36,7 @@ export default function Product({ cart, setCart, product, loggedInAs }) {
           </Card.Title>
         </Card.Body>
       </Card>
+
     </div>
   )
 }

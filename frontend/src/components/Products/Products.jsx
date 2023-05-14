@@ -2,9 +2,10 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import Product from "./Product.jsx";
+import OrderAddProduct from "../Orders/OrderAddProduct.jsx";
 const API = process.env.REACT_APP_API_URL;
 
-function Products({ cart, setCart, loggedInAs }) {
+export default function Products({ cart, setCart, loggedInAs }) {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -22,6 +23,7 @@ function Products({ cart, setCart, loggedInAs }) {
   return (
     <div>
       <h1>Welcome to the Products page!</h1>
+
       <Row md={2} xs={1} lg={3} className="g-3">
         {products.map((product) => {
           return (
@@ -36,7 +38,7 @@ function Products({ cart, setCart, loggedInAs }) {
           )
         })}
       </Row>
+
     </div>
   )
 }
-export default Products;

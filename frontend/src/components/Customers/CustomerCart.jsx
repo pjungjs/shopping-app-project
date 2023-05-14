@@ -1,80 +1,73 @@
 /*
-
 "FIX" - search term for flagged code
-
-FIX - handleCheckout is called without interposition of anonymous function.  Will this cause trigger on render?
-
-Delete dummy data "cart"
-
 */
 
 import axios from "axios";
 import { useState, useEffect } from "react";
-//import { useNavigate } from "react-router-dom";
 
 const API = process.env.REACT_APP_API_URL;
+const {
+  deepCopyObject
+} = require("../../utilities/utilityFunctions.js");
 
 export default function CustomerCart({ loggedInAs, cart, setCart, customerCart = {} }) {
-  // const [editProduct, setEditProduct] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-
-  // dummy data
-  // {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
-  //cart = { [`customer${loggedInAs.id}`]: customerCart };
 
   /*
+  cart sample: {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
   customerCart sample: {product1: 5, product2: 12}
   itemIDArray sample: [1, 2]
   customerCart[`product${X}`] returns quantity ordered of product X.
   */
 
-  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [itemIDArray, setItemIDArray] = useState([]);
+  const [checkoutComplete, setCheckoutComplete] = useState(false);
+
+  useEffect(() => {
+    setItemIDArray(Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", ""))))
+  }, [customerCart])
+
+  useEffect(() => {
+    axios.get(`${API}/products`)
+      .then((response) => {
+        console.log("Looping");
+        const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
+        setFilteredProducts(filteredList);
+      })
+      .catch((e) => console.warn("catch", e));
+  }, [itemIDArray]);
 
   // useEffect bug track
   useEffect(() => {
     console.log("CCUEBug cart", cart)
   }, [cart])
 
-  useEffect(() => {
-    axios.get(`${API}/products`)
-      .then((response) => {
-        // FIX:  Infinite render loop.  Removing itemIDArray from dependency seems to stop loop, but
-        // then lint error triggers.  Probably just need to look to see how itemIDArray is modified within
-        // the useEffect.
-        console.log("Looping");
-        setFilteredProducts(response.data.filter(product => itemIDArray.includes(product.id)))
-        //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
-      })
-      .catch((e) => console.warn("catch", e));
-  }, [])
-
-  //const navigate = useNavigate();
-
-  // const spaces = 5;
-
-  // const gimmeSpace = (spaces) => {
-  //   return "\u00A0".repeat(spaces)
-  // }
-
-  // const delayedOutput = async (productID) => {
-  //   return filteredProducts.find(product => product.id === productID).description;
-  // }
-
   // Calling function allows control statements.  Only ternary expressions may be called from normal component return.
   // Prevents hanging "null" references.
+  /*
+  Will deep copy objects inside objects, as in cart state.
+  If there are arrays inside objects, this will make funny results, so don't do it.
+  */
+
   const listCartItems = () => {
     // within map, ${JSON.stringify(filteredProducts)} ok
     if (Object.keys(customerCart).length === 0) {
       return (
         <div>No items in cart</div>
       )
+    } else if (checkoutComplete) {
+      console.log("listCartItems checkout complete", cart)
+      return (
+        <div>Checkout complete.</div>
+      )
     } else {
       return (
         <table>
           <tbody>
             {filteredProducts.map((product) => {
+              console.log("listCartItems filteredProducts");
               return (
-                <tr key={product.id}>
+                <tr key={`listCartItems${product.id}`}>
                   <td>
                     <img src={require(`../Products${(product.image_url).replace(".", "")}`)} alt={`${product.description}`} style={{ "width": "50px" }}></img>
                   </td>
@@ -93,23 +86,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
       )
     }
   }
-
-  /*
-  Will deep copy objects inside objects, as in cart state.
-  If there are arrays inside objects, this will make funny results, so don't do it.
-  */
-  const deepCopyObject = (objectToDuplicate) => {
-    const returnObject = {};
-    for (const key in objectToDuplicate) {
-      // null is object type in Javascript.
-      if (typeof objectToDuplicate[key] === 'object' && objectToDuplicate[key] !== null) {
-        returnObject[key] = deepCopyObject(objectToDuplicate[key]);
-      } else {
-        returnObject[key] = objectToDuplicate[key];
-      }
-    }
-    return returnObject;
-  }
+  //listCartItems
   /*
   
   CREATE TABLE products (
@@ -141,52 +118,112 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
   Sample cart data
     {customer1: {product1: 14, product2: 5}, customer2: {product40, 15}}
 
-
-    FIX:  Asynchronous removal of multiple product from cart MAY not trigger issue.  .then makes sequential?
     FIX:  What happens, exactly, when customer1:{}? 
-    FIX:  Really, put product put inside itself?  Fix to add order to SQL, but first, fix product qty not updating.
-    FIX:  Stick deepcopyObject, gimmeSpace, sort functions inside other components as exports.
-
     FIX:  handleCheckout only operates one item at a time.  Possibly re-render.
+
+    FIX:  Promise.all works ok, but visual render not fixed yet.
+    FIX:  Negative quanitities may be entered in cart
+    FIX: Test negative quantities into SQL quantities.
   */
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
+    try {
+      // promises is array of async
+      const promises = filteredProducts.map(async (product) => {
+        console.log(`handleCheckout put, item ${product.id}`);
+        await axios.put(`${API}/products/${product.id}`,
+          {
+            ...product,
+            quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]),
+          })
+        // put
+
+        const date = new Date();
+
+        await axios.post(`${API}/orders`,
+          {
+            product_id: Number(product.id),
+            customer_id: Number(loggedInAs.id),
+            product_qty: Number(customerCart[`product${product.id}`]),
+            date:
+            date.toLocaleString("default", { year: "numeric" })
+            + "-"
+            + date.toLocaleString("default", { month: "2-digit" })
+            + "-"
+            + date.toLocaleString("default", { day: "2-digit" }),
+          });
+        // axios post
+
+        setCart((previous) => {
+          const tempCart = deepCopyObject(previous);
+          delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
+          return tempCart;
+        });
+      });
+      // promises
+
+      // wait until all promises performed with Promise.all
+      await Promise.all(promises);
+      setCheckoutComplete(true);
+      
+      /*
+      Alternate implementation setCart
+      const tempCart = deepCopyObject(cart);
+      for (const productToDelete of itemIDArray) {
+          delete tempCart[`customer${loggedInAs.id}`][`product${productToDelete}`];
+      }
+      setCart(tempCart);
+      */
+      
+      console.log("All items processed OK.")
+    } catch (error) {
+      console.error("handleCheckout error", error)
+    }
+  };
+  // handleCheckout
+
+  /*
+  FIX: Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?
+  Regardless, first functionality is checkout, and state-based changes *should* not trigger infinite re-render
+  */
+  return (
+    <div>
+      <h1>
+        {loggedInAs.first_name}'s Cart
+      </h1>
+      {listCartItems()}
+      <button onClick={handleCheckout}>Checkout</button>
+    </div>
+  )
+}
+
+/*
+
+legacy handleCheckout (pre Promise all)
+const handleCheckout = async () => {
     filteredProducts.forEach((product) => {
+      console.log("handleCheckout filteredProducts");
       axios
         .put(`${API}/products/${product.id}`, { ...product, quantity_in_stock: Number(product.quantity_in_stock - customerCart[`product${product.id}`]) })
+        // end put
         .then(() => {
           console.log("Product put attempted.");
           var date = new Date();
-
-          // test output
-          // console.log(JSON.stringify({
-          //   product_id:  Number(product.id),
-          //   customer_id: Number(loggedInAs.id),
-          //   product_qty: Number(customerCart[`product${product.id}`]),
-          //   date:
-          //   date.toLocaleString("default", {year: "numeric" })
-          //   +"-"
-          //   +date.toLocaleString("default", {month: "2-digit"})
-          //   +"-"
-          //   +date.toLocaleString("default", {day: "2-digit"})
-          // }))
-
           //inner axios start
           axios
             .post(`${API}/orders`, {
-              product_id:  Number(product.id),
+              product_id: Number(product.id),
               customer_id: Number(loggedInAs.id),
               product_qty: Number(customerCart[`product${product.id}`]),
               date:
-              date.toLocaleString("default", {year: "numeric" })
-              +"-"
-              +date.toLocaleString("default", {month: "2-digit"})
-              +"-"
-              +date.toLocaleString("default", {day: "2-digit"})
+                date.toLocaleString("default", { year: "numeric" })
+                + "-"
+                + date.toLocaleString("default", { month: "2-digit" })
+                + "-"
+                + date.toLocaleString("default", { day: "2-digit" })
             })
             .then(() => {
               // edit state start
-              //temporary variable as removeFromObject.  Spread operator does NOT work correctly
               const tempCart = deepCopyObject(cart);
               delete tempCart[`customer${loggedInAs.id}`][`product${product.id}`];
               setCart(tempCart);
@@ -200,21 +237,45 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
           (error) => console.error(`Axios handleCheckout error on ${product.id} edit product`, error)
         )
         .catch((c) => console.warn(`catch handleCheckout product ${product.id} edit product`, c));
-    }) // forEach
+
+    })
+    // forEach
   }
+*/
 
-  // Do we want to edit cart?  delete cart?  delete entire cart?  Confirm quantities a second time?
-  //Regardless, the first functionality is checkout.
-  return (
-    <div>
-      <h1>
-        {loggedInAs.first_name}'s Cart
-      </h1>
-      {listCartItems()}
-      <button onClick={handleCheckout}>Checkout</button>
-    </div>
-  )
+/*
+  start original itemIDArray implementation
 
+  useEffect(() => {
+    axios.get(`${API}/products`)
+      .then((response) => {
+        // FIX:  Infinite render loop.  Removing itemIDArray from dependency seems to stop loop, but
+        // then lint error triggers.  Probably just need to look to see how itemIDArray is modified within
+        // the useEffect.
+        console.log("Looping");
+        // Setting data equal to const fail resolve trigger.
+        const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
+        setFilteredProducts(filteredList);
+        //setHamster(filteredList);
+        //console.log("filtered", response.data.filter(product => itemIDArray.includes(product.id)))
+      })
+      .catch((e) => console.warn("catch", e));
+    //setHamster successfully avoids infinite re-render.
+    // console.log(hamster);
+  }, [])
+
+  const itemIDArray = Object.keys(customerCart).map(lineItemOnOrder => Number(lineItemOnOrder.replace("product", "")));
+
+
+  // End original itemIDArray implementation
+*/
+
+/*
+Legacy Jinseok code
+*/
+
+  //const navigate = useNavigate();
+  // const [editProduct, setEditProduct] = useState([]);
   // async function updateProduct() {
   //   await axios
   //     .put(`${API}/products/${id}`, editProduct)
@@ -300,4 +361,3 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
   //     <button onClick={() => handleCheckoutButton()}>Checkout</button>
   //   </>
   // )
-}

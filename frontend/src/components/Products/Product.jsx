@@ -1,4 +1,3 @@
-import OrderAddProduct from "../Orders/OrderAddProduct.jsx";
 // import { useState } from "react";
 
 export default function Product({ product, cart, setCart, loggedInAs }) {
@@ -43,14 +42,6 @@ export default function Product({ product, cart, setCart, loggedInAs }) {
         onChange={(event) => handleNumberChange(event)}
       />
       <button onClick={() => handleBuyButton()}>Buy</button> */}
-      <OrderAddProduct
-        key={product.id}
-        productID={product.id}
-        productInStock={product.quantity_in_stock}
-        cart={cart}
-        setCart={setCart}
-        loggedInAs={loggedInAs}
-      />
     </div>
   )
 }

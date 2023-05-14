@@ -3,29 +3,29 @@ import { Link } from "react-router-dom";
 export default function RetailerProduct({ product }) {
 
     return (
-        <tr>
-            <td>
+        <tr className="border-b dark:border-neutral-500">
+            <td className="whitespace-nowrap px-6 py-4 font-medium">
                 {product.name}
             </td>
-            <td>
+            <td className="whitespace-nowrap px-6 py-4">
                 {product.description}
             </td>
-            <td>
+            <td className="whitespace-nowrap px-6 py-4">
                 {product.price}
             </td>
-            <td>
+            <td className="whitespace-nowrap px-6 py-4">
                 {product.quantity_in_stock}
             </td>
-            <td>
+            <td className="whitespace-nowrap px-6 py-4">
                 {product.card_id}
             </td>
-            <td>
+            <td className="whitespace-nowrap px-6 py-4">
                 {product.card_rarity}
             </td>
-            <td>
+            <td className="whitespace-nowrap px-6 py-4">
                 {product.product_upc}
             </td>
-            <td>
+            <td className="whitespace-nowrap px-6 py-4">
                 <Link to={`/retailer/products/${product.id}`}>Show Product</Link>
             </td>
         </tr>

@@ -7,12 +7,12 @@ const API = process.env.REACT_APP_API_URL;
 export default function RetailerNewProduct() {
     let navigate = useNavigate();
 
-    const addProduct = (newProduct) => {
+    const addProduct = async (newProduct) => {
         axios
             .post(`${API}/products`, newProduct)
             .then(
-                () => {
-                    navigate(`/retailer/products`);
+                (response) => {
+                    navigate(`/retailer/products/${response.data.id}`);
                 },
                 (error) => console.error(error)
             )

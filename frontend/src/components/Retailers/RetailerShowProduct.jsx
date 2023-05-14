@@ -5,22 +5,28 @@ const API = process.env.REACT_APP_API_URL
 
 export default function RetailerShowProduct() {
     const [product, setProduct] = useState([]);
+    const [refString, setRefString] = useState("");
     const { id } = useParams();
 
     useEffect(() => {
         axios.get(`${API}/products/${id}`)
             .then((response) => {
                 setProduct(response.data);
+                setRefString (require(`../Products${response.data.image_url.slice(1)}`))
             }).catch((e) => {
                 console.warn("catch", e);
             })
     }, [id]);
 
+    useEffect(() => {
+        console.log("Image reference", refString)
+    }, [refString])
+
     return (
         <div>
             <h4>{product.name}</h4>
             <h5>{product.description}</h5>
-            <img src={require(`${product.image_url}`)} alt={`${product.description}`} style={{ "width": "1200px" }}></img>
+            <img src={refString} alt={`${product.description}`} style={{ "width": "200px" }}></img>
             <p>${product.price} per</p>
             <p>Quantity in stock:  {product.quantity_in_stock}</p>
             <p>Card ID:  {product.card_id}</p>

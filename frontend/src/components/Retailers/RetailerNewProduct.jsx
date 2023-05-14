@@ -22,7 +22,7 @@ export default function RetailerNewProduct() {
     const [product, setProduct] = useState({
         name: "",
         description: "",
-        image_url: './images/OPplaceholder.jpg',
+        image_url: "./images/OPplaceholder.jpg",
         price: 0,
         quantity_in_stock: 0,
         card_id: "",
@@ -52,6 +52,7 @@ export default function RetailerNewProduct() {
                     placeholder="Product Name"
                     required
                 />
+                <br />
                 <label htmlFor="description">Description:</label>
                 <input
                     id="description"
@@ -61,6 +62,7 @@ export default function RetailerNewProduct() {
                     placeholder="Product Description"
                     required
                 />
+                <br />
                 <label htmlFor="price">Price:</label>
                 <input
                     id="price"
@@ -70,6 +72,7 @@ export default function RetailerNewProduct() {
                     placeholder="Product Price"
                     required
                 />
+                <br />
                 <label htmlFor="quantity_in_stock">Quantity In Stock:</label>
                 <input
                     id="quantity_in_stock"
@@ -79,6 +82,7 @@ export default function RetailerNewProduct() {
                     placeholder="Quantity In Stock"
                     required
                 />
+                <br />
                 <label htmlFor="card_id">Card ID:</label>
                 <input
                     id="card_id"
@@ -88,6 +92,7 @@ export default function RetailerNewProduct() {
                     placeholder="Card ID"
                     required
                 />
+                <br />
                 <label htmlFor="card_rarity">Card Rarity:</label>
                 <input
                     id="card_rarity"
@@ -97,10 +102,11 @@ export default function RetailerNewProduct() {
                     placeholder="Card Rarity"
                     required
                 />
-                <label htmlFor="product_UPC">Product UPC:</label>
+                <br />
+                <label htmlFor="product_upc">Product UPC:</label>
                 <input
-                    id="product_UPC"
-                    value={product.product_UPC}
+                    id="product_upc"
+                    value={product.product_upc}
                     type="text"
                     onChange={handleTextChange}
                     placeholder="Product UPC"

@@ -96,6 +96,7 @@ export default function RetailerEditProduct() {
                     placeholder="Product Name"
                     required
                 />
+                <br />
                 <label htmlFor="description">Description:</label>
                 <input
                     id="description"
@@ -105,6 +106,7 @@ export default function RetailerEditProduct() {
                     placeholder="Product Description"
                     required
                 />
+                <br />
                 <label htmlFor="price">Price:</label>
                 <input
                     id="price"
@@ -114,6 +116,7 @@ export default function RetailerEditProduct() {
                     placeholder="Product Price"
                     required
                 />
+                <br />
                 <label htmlFor="quantity_in_stock">Quantity In Stock:</label>
                 <input
                     id="quantity_in_stock"
@@ -123,6 +126,7 @@ export default function RetailerEditProduct() {
                     placeholder="Quantity In Stock"
                     required
                 />
+                <br />
                 <label htmlFor="card_id">Card ID:</label>
                 <input
                     id="card_id"
@@ -132,6 +136,7 @@ export default function RetailerEditProduct() {
                     placeholder="Card ID"
                     required
                 />
+                <br />
                 <label htmlFor="card_rarity">Card Rarity:</label>
                 <input
                     id="card_rarity"
@@ -141,10 +146,11 @@ export default function RetailerEditProduct() {
                     placeholder="Card Rarity"
                     required
                 />
+                <br />
                 <label htmlFor="product_UPC">Product UPC:</label>
                 <input
                     id="product_UPC"
-                    value={product.product_UPC}
+                    value={product.product_upc}
                     type="text"
                     onChange={handleTextChange}
                     placeholder="Product UPC"

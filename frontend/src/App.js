@@ -55,8 +55,8 @@ function App() {
             
             <Route path="/retailer/products" element={<RetailerProducts />} />
             <Route path="/retailer/products/new" element={<RetailerNewProduct />} />
-            <Route exact path="/retailer/products/:id" element={<RetailerShowProduct />} />
-            <Route path="/retailer/products/:id/edit" element={<RetailerEditProduct />} />
+            <Route exact path="/retailer/products/:id" element ={<RetailerShowProduct />} />
+            <Route exact path="/retailer/products/:id/edit" element={<RetailerEditProduct />} />
             
             <Route path="/about" element={<About />} />
 

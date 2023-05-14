@@ -40,7 +40,7 @@ export default function RetailerProducts() {
                 </thead>
                 <tbody>
                     {retailerProducts.map((product) => {
-                        return <RetailerProduct key={product.id} product={product} />;
+                        return <RetailerProduct key={`RetailerProduct${product.id}`} product={product} />;
                     })}
                 </tbody>
             </table>

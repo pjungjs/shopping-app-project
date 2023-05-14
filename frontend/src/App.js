@@ -20,7 +20,7 @@ import Product from "./components/Products/Product.jsx";
 import RetailerProducts from "./components/Retailers/RetailerProducts.jsx";
 import RetailerNewProduct from "./components/Retailers/RetailerNewProduct.jsx";
 import RetailerEditProduct from "./components/Retailers/RetailerEditProduct.jsx";
-import RetailerShowProduct from "./components/Retailers/RetailerShowProduct.jsx";
+import RetailerShowProduct from "./components/Retailers/RetailerShowProduct.jsx"
 
 import { useEffect } from 'react';
 

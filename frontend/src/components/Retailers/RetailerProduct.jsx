@@ -26,7 +26,7 @@ export default function RetailerProduct({ product }) {
                 {product.product_upc}
             </td>
             <td>
-                <Link to={`/retailer/products/${product.id}`}>✏️</Link>
+                <Link to={`/retailer/products/${product.id}`}>Show Product</Link>
             </td>
         </tr>
     );

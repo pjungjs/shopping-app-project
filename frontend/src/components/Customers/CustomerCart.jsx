@@ -30,7 +30,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart, customerCart =
   useEffect(() => {
     axios.get(`${API}/products`)
       .then((response) => {
-        console.log("Looping");
+  //      console.log("Looping");
         const filteredList = response.data.filter(product => itemIDArray.includes(product.id))
         setFilteredProducts(filteredList);
       })

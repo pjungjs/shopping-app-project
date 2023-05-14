@@ -40,7 +40,7 @@ export default function Products({ cart, setCart, loggedInAs }) {
       <h1>Welcome to the Products page!</h1>
       {products.map((product) => {
         return (
-          <div>
+          <div key={`ProductContainer${product.id}`}>
             <Product
               key={`Product${product.id}`}
               product={product}

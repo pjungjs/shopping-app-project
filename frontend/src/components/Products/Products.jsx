@@ -8,6 +8,7 @@ const API = process.env.REACT_APP_API_URL;
 export default function Products({ cart, setCart, loggedInAs }) {
   const [products, setProducts] = useState([]);
 
+  //sort function satisfies "front end calculation . . . displayed to user".
   useEffect(() => {
     async function getProducts() {
       await axios
@@ -23,7 +24,6 @@ export default function Products({ cart, setCart, loggedInAs }) {
   return (
     <div>
       <h1>Welcome to the Products page!</h1>
-
       <Row md={2} xs={1} lg={3} className="g-3">
         {products.map((product) => {
           return (

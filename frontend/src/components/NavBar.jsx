@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Button, Container, Nav, Navbar as NavbarBs } from "react-bootstrap";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { gimmeSpace } from "../utilities/utilityFunctions";
+
 
 function NavBar({ loggedInAs, cart }) {
   const [cartQuantity, setCartQuantity] = useState(0);
@@ -57,6 +59,10 @@ function NavBar({ loggedInAs, cart }) {
                     {cartQuantity}
                   </div>
                 </Button>
+              </Nav.Link>
+              {gimmeSpace(5)}
+              <Nav.Link to={`retailer/products/new`} as={NavLink}>
+                Enter New Product
               </Nav.Link>
             </>
           )

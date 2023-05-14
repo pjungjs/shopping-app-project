@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Customer from "./Customer.jsx";
 const API = process.env.REACT_APP_API_URL;
 
 function Customers({ setLoggedInAs }) {
   const [allCustomers, setAllCustomers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function getAllCustomers() {
@@ -16,6 +17,11 @@ function Customers({ setLoggedInAs }) {
     };
     getAllCustomers();
   }, []);
+
+  function handleOnClick() {
+    setLoggedInAs({first_name: "Guest"});
+    navigate("/products");
+  }
 
   return (
     <div>
@@ -28,9 +34,11 @@ function Customers({ setLoggedInAs }) {
           })
         }
         <li>
-          <Link to="/customers/new">New Customer</Link>
+          <Link to="/customers/new">
+            <button>New Customer</button>
+          </Link>
         </li>
-        <li>Guest</li>
+        <li><button onClick={() => handleOnClick()}>Guest</button></li>
       </ul>
     </div>
   )

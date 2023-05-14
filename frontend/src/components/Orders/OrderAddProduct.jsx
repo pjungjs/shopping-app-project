@@ -19,7 +19,7 @@ export default function OrderAddProduct({ cart, setCart, loggedInAs, productCard
       alert(`Sorry, only ${productInStock} of ${orderQuantity} item(s) in stock.  Your order has been updated to the maximum available quantity.`)
     }
     setConfirmAddToCart(true);
-    setFinalOrderQuantity(orderQuantity);
+    setFinalOrderQuantity(orderQuantity <= productInStock ? orderQuantity : productInStock);
     setOrderQuantity(0);
   };
 

@@ -42,7 +42,7 @@ function App() {
               <Route path="/customers/new" element={<NewCustomer />} />
               <Route path="/customers/:id" element={<CustomerDetails />} />
               <Route path="/customers/:id/edit" element={<EditCustomer setLoggedInAs={setLoggedInAs} />} />
-              <Route path="/customers/:id/cart" element={<CustomerCart loggedInAs={loggedInAs} customerCart={cart[loggedInAs.first_name]} cart={cart} setCart={setCart} />} />
+              <Route path="/customers/:id/cart" element={<CustomerCart loggedInAs={loggedInAs} cart={cart} setCart={setCart} />} />
               <Route path="/customers/:id/history" element={<CustomerHistory loggedInAs={loggedInAs} />} />
 
               <Route path="/products" element={<Products loggedInAs={loggedInAs} cart={cart} setCart={setCart} />} />

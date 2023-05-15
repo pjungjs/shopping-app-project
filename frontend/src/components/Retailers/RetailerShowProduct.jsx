@@ -32,6 +32,9 @@ export default function RetailerShowProduct() {
             <p>Card ID:  {product.card_id}</p>
             <p>Rarity: {product.card_rarity}</p>
             <p>UPC:  {product.product_upc}</p>
+            <Link to={`/retailer/products`}>
+                <button>Back</button>
+            </Link>
             <Link to={`/retailer/products/${product.id}/edit`}>
                 <button>Edit</button>
             </Link>

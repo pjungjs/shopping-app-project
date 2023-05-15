@@ -4,17 +4,16 @@ import { Button, Container, Nav, Navbar as NavbarBs } from "react-bootstrap";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { gimmeSpace } from "../utilities/utilityFunctions";
 
-
 function NavBar({ loggedInAs, cart }) {
   const [cartQuantity, setCartQuantity] = useState(0);
 
   useEffect(() => {
-    if (Object.keys(cart).length > 0) {
-      setCartQuantity(Object.keys(cart[loggedInAs.first_name]).length);
-    } else {
+    if (!cart[loggedInAs.first_name]) {
       setCartQuantity(0);
+    } else {
+      setCartQuantity(Object.keys(cart[loggedInAs.first_name]).length);
     }
-  }, [cart])
+  }, [cart, loggedInAs.first_name])
 
   const logIn = () => {
     if (loggedInAs.first_name === "Guest") {

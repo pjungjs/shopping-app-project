@@ -84,7 +84,7 @@ export default function CustomerCart({ loggedInAs, cart, setCart }) {
         {loggedInAs.first_name}'s Cart
       </h1>
       {
-        !Object.keys(cart).length || !Object.keys(cart[loggedInAs.first_name]).length
+        !Object.keys(cart).length || !cart[loggedInAs.first_name] || !Object.keys(cart[loggedInAs.first_name]).length
         ? (
           <>
             <p>No items in cart</p>

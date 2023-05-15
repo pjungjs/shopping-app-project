@@ -161,12 +161,12 @@ export default function RetailerEditProduct() {
                 <input type="submit" />
             </form>
             <div>
-                <Link to={`/retailer/products/${id}/:edit`} >
+                <Link to={`/retailer/products/${id}`} >
                     <button>Cancel</button>
                 </Link>
             </div>
             <div>
-                <button onClick={handleDelete}>Delete Product Record</button>
+                <button className="text-danger" onClick={handleDelete} >Delete Product Record</button>
             </div>
         </div>
     )

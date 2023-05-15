@@ -116,6 +116,7 @@ export default function RetailerNewProduct() {
 
                 <input type="submit" />
             </form>
+            <button onClick={() => navigate("/retailer/products")}>Cancel</button>
         </div>
     );
 }

@@ -11,12 +11,10 @@ function NavBar({ loggedInAs, cart }) {
   useEffect(() => {
     if (Object.keys(cart).length > 0) {
       setCartQuantity(Object.keys(cart[loggedInAs.first_name]).length);
+    } else {
+      setCartQuantity(0);
     }
   }, [cart])
-
-  useEffect(() => {
-    setCartQuantity(0);
-  }, [loggedInAs])
 
   const logIn = () => {
     if (loggedInAs.first_name === "Guest") {

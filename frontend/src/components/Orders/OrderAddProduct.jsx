@@ -10,7 +10,8 @@ export default function OrderAddProduct({ cart, setCart, loggedInAs, productCard
   };
 
   const handleAddToCart = () => {
-    if (orderQuantity === 0) {
+    if (orderQuantity <= 0) {
+      setOrderQuantity(0);
       return alert("Quantity must be above 0. Please try again");
     } else if (orderQuantity <= productInStock) {
       setCart({ ...cart, [loggedInAs.first_name]: {...cart[loggedInAs.first_name], [productCardId]: orderQuantity } });
@@ -26,7 +27,7 @@ export default function OrderAddProduct({ cart, setCart, loggedInAs, productCard
   return (
     <>
       {
-        loggedInAs.first_name === "Guest" ? (
+        loggedInAs.first_name === "Guest" || loggedInAs.first_name === "Retailer" ? (
           ""
         ) : (
           <div className="New">

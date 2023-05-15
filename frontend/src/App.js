@@ -29,14 +29,6 @@ function App() {
 
   return (
     <div className="App">
-      <div className="container mx-auto bg-gray-200 rounded-xl shadow border p-8 m-10">
-        <p className="text-3xl text-gray-700 font-bold mb-5">
-          Welcome!
-        </p>
-        <p className="text-gray-500 text-lg">
-          React and Tailwind CSS in action
-        </p>
-      </div>
       <Router>
         <header>
           <NavBar loggedInAs={loggedInAs} cart={cart} />
@@ -56,7 +48,7 @@ function App() {
               <Route path="/products" element={<Products loggedInAs={loggedInAs} cart={cart} setCart={setCart} />} />
               <Route path="/products/:id" element={<Product />} />
               
-              <Route path="/retailer/products" element={<RetailerProducts />} />
+              <Route path="/retailer/products" element={<RetailerProducts setLoggedInAs={setLoggedInAs} />} />
               <Route path="/retailer/products/new" element={<RetailerNewProduct />} />
               <Route exact path="/retailer/products/:id" element ={<RetailerShowProduct />} />
               <Route exact path="/retailer/products/:id/edit" element={<RetailerEditProduct />} />
